@@ -14,8 +14,7 @@ void move_forward(int a, int b);
 
 void turn_left(int a, int b);
 
-void turn_right(int a, int b);
-
+void turn_right(int a, int b);//no bitches
 int main(void)
 {
     int motor_percent = 25; //Input power level here
