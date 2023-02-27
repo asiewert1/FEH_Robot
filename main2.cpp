@@ -49,6 +49,46 @@ void zero(){
     left_motor.Stop();
 }
 
+int turnRight(int tcount, int tpercent)
+{
+    // reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    // motor percents 
+    right_motor.SetPercent(tpercent);
+    left_motor.SetPercent(-tpercent);
+
+    // keep running motors while average of turn counts is less then tcount
+    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < tcount);
+
+    // turn off motors
+    zero();
+
+
+
+}
+
+int turnLeft(int tcount, int tpercent)
+{
+    // reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    // motor percents 
+    right_motor.SetPercent(-tpercent);
+    left_motor.SetPercent(tpercent);
+
+    // keep running motors while average of turn counts is less then tcount
+    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < tcount);
+
+    // turn off motors
+    zero();
+
+
+
+}
+
 int main(){
 
     //wait for light to turn on
