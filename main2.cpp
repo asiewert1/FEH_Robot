@@ -18,7 +18,7 @@ void turnLeft(int tcount, int tpercent);
 void turnRight(int tcount, int tpercent);
 void moveForward(int counts,int percent);
 void moveBackward(int counts,int percent);
-void zero(int z);
+void zero();
 void boardingPass();
 
 
@@ -109,5 +109,47 @@ int main(){
     //wait for light to turn on
     while(CdS_cell.Value()<LIGHT_ON){}
 
+     //move to ramp, 12'
+    moveForward();
     
+    //move up ramp, 12'
+    moveForward();
+
+    //move forward towards passport stamp, 8'
+    moveForward();
+
+    //90*
+    turnLeft();
+
+    //6'
+    moveForward();
+
+    //robot is now facing away from kiosk, 90*
+    turnleft();
+
+    //13'
+    moveBackward();
+
+    //while the switches are both unpressed
+    while (micro_right.Value() && micro_left.Value())
+    {
+        moveBackward();
+    }
+
+    //16'
+    moveForward();
+
+    turnLeft();
+
+    //4'
+    moveForward();
+
+    turnRight();
+
+    //down ramp, 12'
+    moveForward();
+
+    //12'
+    moveForward()
+     
 }
