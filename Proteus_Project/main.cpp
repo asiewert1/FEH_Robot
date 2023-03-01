@@ -7,12 +7,12 @@
 
 //Declarations for encoders & motors
 AnalogInputPin CdS_cell (FEHIO::P0_1);
-DigitalEncoder right_encoder(FEHIO::P0_0);
-DigitalEncoder left_encoder(FEHIO::P0_1);
-FEHMotor right_motor(FEHMotor::Motor3,9.0);
+DigitalEncoder right_encoder(FEHIO::P1_0);
+DigitalEncoder left_encoder(FEHIO::P1_1);
+FEHMotor right_motor(FEHMotor::Motor1,9.0);
 FEHMotor left_motor(FEHMotor::Motor0,9.0);
-DigitalInputPin micro_left(FEHIO::P0_1);
-DigitalInputPin micro_right(FEHIO::P0_1);
+DigitalInputPin micro_left(FEHIO::P0_0);
+DigitalInputPin micro_right(FEHIO::P3_0);
 
 void turnLeft(int tcount, int tpercent);
 void turnRight(int tcount, int tpercent);
@@ -62,7 +62,7 @@ void zero(){
     left_motor.Stop();
 }
 
-int turnRight(int tcount, int tpercent)
+void turnRight(int tcount, int tpercent)
 {
     // reset encoder counts
     right_encoder.ResetCounts();
@@ -80,7 +80,7 @@ int turnRight(int tcount, int tpercent)
 
 }
 
-int turnLeft(int tcount, int tpercent)
+void turnLeft(int tcount, int tpercent)
 {
     // reset encoder counts
     right_encoder.ResetCounts();
@@ -112,32 +112,32 @@ int main(){
 
 
     //count for turns. will turn 90 deg
-    tcount= 225;
-    tpercent=25;
+    int tcount= 225;
+    int tpercent=25;
 
-    upRampPercent= 40;
-    percent= 25;
+    int upRampPercent= 40;
+    int percent= 25;
 
 
     //wait for light to turn on
-    //while(CdS_cell.Value()<LIGHT_ON){}
+    while(CdS_cell.Value()>2){}
 
-     //move to ramp, 12'
-    moveForward(480,percent);
+     //move to ramp, 
+    moveForward(550,percent);
     
     //move up ramp, 12'
-    moveForward(480,upRampPercent);
+    moveForward(600,upRampPercent);
 
     //move forward towards passport stamp, 8'
-    moveForward(320,percent);
+    moveForward(400,percent);
 
     //90*
     turnLeft(tcount,tpercent);
 
     //6'
-    moveForward(240,percent);
+    moveForward(300,percent);
 
-    //robot is now facing away from kiosk, 90*
+    //robot is now facing away from kiosk after a 90* turn
     turnLeft(tcount,tpercent);
 
     //13'
@@ -158,7 +158,7 @@ int main(){
     turnLeft(tcount,tpercent);
 
     //4'
-    moveForward(160,percent);
+    moveForward(330,percent);
 
     //90*
     turnRight(tcount,tpercent);
@@ -167,6 +167,6 @@ int main(){
     moveForward(480,percent);
 
     //12'
-    moveForward(480,percent);
+    moveForward(620,percent);
      
 }
