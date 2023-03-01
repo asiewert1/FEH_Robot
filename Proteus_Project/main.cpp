@@ -118,38 +118,62 @@ int main(){
     int upRampPercent= 40;
     int percent= 25;
 
+    LCD.Clear(BLACK);
 
     //wait for light to turn on
+
+    LCD.WriteLine("Waiting for Light");
+
+    
     while(CdS_cell.Value()>2){}
+
+    LCD.WriteLine("Light Seen");
+    
+    LCD.WriteLine("Moving Foward to Ramp");
 
      //move to ramp, 
     moveForward(550,percent);
-    
+
+    LCD.WriteLine("Moving Up Ramp")
     //move up ramp, 12'
     moveForward(600,upRampPercent);
+
+    LCD.WriteLine("Moving Towards Pass Port Stamp");
 
     //move forward towards passport stamp, 8'
     moveForward(400,percent);
 
+    LCD.Clear(BLACK);
+
+    LCD.WriteLine("Turning Left");
+
     //90*
     turnLeft(tcount,tpercent);
+
+    LCD.WriteLine("Moving Foward");
 
     //6'
     moveForward(300,percent);
 
+    LCD.WriteLine("Turning Left");
+
     //robot is now facing away from kiosk after a 90* turn
     turnLeft(tcount,tpercent);
+
+    LCD.WriteLine("Moving Backward");
 
     //13'
     moveBackward(520,percent);
 
-    //while the switches are both unpressed
+    //while the switches are both unpressed back up into ticket booth
     while (micro_right.Value() && micro_left.Value())
     {
         //move backward
         right_motor.SetPercent(-20);
         left_motor.SetPercent(-20);
     }
+
+    LCD.WriteLine("Switches hit moving foward");
 
     //16'
     moveForward(640,percent);
