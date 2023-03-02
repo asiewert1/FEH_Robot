@@ -121,6 +121,8 @@ int main(){
 
 
     //count for turns. will turn 90 deg
+
+    //changed percent constants to negative because the motors were turning the wrong way
     int tcount= 225;
     int tpercent=-25;
 
@@ -136,6 +138,7 @@ int main(){
 
     Sleep(2000);
 
+    // updated CdS value. While the value is more than .5 it is stuck in while loop. If lower then goes to next line
     while(CdS_cell.Value()>.5){};
 
     LCD.WriteLine("Light Seen");
