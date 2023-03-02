@@ -97,6 +97,15 @@ void turnLeft(int tcount, int tpercent)
     zero();
 }
 
+void print_CdS()
+{
+    while(true)
+    {
+        LCD.WriteAt(CdS_cell.Value(), 240, 20);
+        LCD.Clear();
+    }
+}
+
 int main(){
 
     float x, y; //for touch screen
@@ -113,19 +122,21 @@ int main(){
 
     //count for turns. will turn 90 deg
     int tcount= 225;
-    int tpercent=25;
+    int tpercent=-25;
 
-    int upRampPercent= 40;
-    int percent= 25;
+    int upRampPercent= -40;
+    int percent= -25;
 
     LCD.Clear(BLACK);
-
+    
     //wait for light to turn on
-
     LCD.WriteLine("Waiting for Light");
 
-    
-    while(CdS_cell.Value()>2){}
+    LCD.WriteLine(CdS_cell.Value());
+
+    Sleep(2000);
+
+    while(CdS_cell.Value()>.5){};
 
     LCD.WriteLine("Light Seen");
     
@@ -134,7 +145,7 @@ int main(){
      //move to ramp, 
     moveForward(550,percent);
 
-    LCD.WriteLine("Moving Up Ramp")
+    LCD.WriteLine("Moving Up Ramp");
     //move up ramp, 12'
     moveForward(600,upRampPercent);
 
