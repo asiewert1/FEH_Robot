@@ -217,7 +217,7 @@ int main(){
     moveBackward(520,percent);
 
     //while the switches are both unpressed back up into ticket booth
-    while (micro_right.Value() && micro_left.Value())
+    while (micro_right.Value() && micro_left.Value()&&(TimeNow()-t)<5)
     {
         //move backward
         right_motor.SetPercent(20);
@@ -233,7 +233,7 @@ int main(){
     turnLeft(tcount,tpercent);
 
     //4'
-    moveForward(290,percent);
+    moveForward(350,percent);
 
     //90*
     turnRight(tcount,tpercent);
