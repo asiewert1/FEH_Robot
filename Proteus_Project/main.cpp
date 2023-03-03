@@ -6,18 +6,20 @@
 
 
 //Declarations for encoders & motors
-AnalogInputPin CdS_cell (FEHIO::P0_1);
-DigitalEncoder right_encoder(FEHIO::P1_0);
-DigitalEncoder left_encoder(FEHIO::P1_1);
+AnalogInputPin CdS_cell (FEHIO::P1_0);
+DigitalEncoder right_encoder(FEHIO::P0_0);
+DigitalEncoder left_encoder(FEHIO::P3_0);
 FEHMotor right_motor(FEHMotor::Motor1,9.0);
 FEHMotor left_motor(FEHMotor::Motor0,9.0);
-DigitalInputPin micro_left(FEHIO::P0_0);
-DigitalInputPin micro_right(FEHIO::P3_0);
+DigitalInputPin micro_left(FEHIO::P3_1);
+DigitalInputPin micro_right(FEHIO::P0_1);
 
 void turnLeft(int tcount, int tpercent);
 void turnRight(int tcount, int tpercent);
 void moveForward(int counts,int percent);
 void moveBackward(int counts,int percent);
+void turnOnlyLeft(int tcount, int tpercent);
+void turnOnlyRight(int tcount, int tpercent);
 void zero();
 void boardingPass();
 
@@ -97,6 +99,38 @@ void turnLeft(int tcount, int tpercent)
     zero();
 }
 
+void turnOnlyRight(int tcount, int tpercent){
+    // reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    // motor percents 
+    
+    left_motor.SetPercent(tpercent);
+
+    // keep running motors while average of turn counts is less then tcount
+    while(left_encoder.Counts() < tcount);
+
+    // turn off motors
+    zero();
+}
+
+void turnOnlyLeft(int tcount, int tpercent){
+    // reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    // motor percents 
+    
+    right_motor.SetPercent(tpercent);
+
+    // keep running motors while average of turn counts is less then tcount
+    while(right_encoder.Counts() < tcount);
+
+    // turn off motors
+    zero();
+}
+
 void print_CdS()
 {
     while(true)
@@ -120,10 +154,9 @@ int main(){
     while(LCD.Touch(&x,&y)); //Wait for screen to be unpressed  
 
 
-    //count for turns. will turn 90 deg
-
     //changed percent constants to negative because the motors were turning the wrong way
-    int tcount= 225;
+    //count for turns. will turn 90 deg
+    int tcount= 253;
     int tpercent=-25;
 
     int upRampPercent= -40;
@@ -136,17 +169,21 @@ int main(){
 
     LCD.WriteLine(CdS_cell.Value());
 
-    Sleep(2000);
+    //Sleep(2000);
 
     // updated CdS value. While the value is more than .5 it is stuck in while loop. If lower then goes to next line
     while(CdS_cell.Value()>.5){};
 
     LCD.WriteLine("Light Seen");
-    
-    LCD.WriteLine("Moving Foward to Ramp");
 
-     //move to ramp, 
-    moveForward(550,percent);
+    //is adjusting to be facing ramp
+    LCD.WriteLine("Turning to face Ramp");
+    turnOnlyRight(415,tpercent);
+    moveForward(80,percent);
+    turnOnlyLeft(135,tpercent);
+
+    LCD.WriteLine("Moving Foward to Ramp");
+    moveForward(300,percent);
 
     LCD.WriteLine("Moving Up Ramp");
     //move up ramp, 12'
@@ -155,7 +192,7 @@ int main(){
     LCD.WriteLine("Moving Towards Pass Port Stamp");
 
     //move forward towards passport stamp, 8'
-    moveForward(400,percent);
+    moveForward(350,percent);
 
     LCD.Clear(BLACK);
 
@@ -183,8 +220,8 @@ int main(){
     while (micro_right.Value() && micro_left.Value())
     {
         //move backward
-        right_motor.SetPercent(-20);
-        left_motor.SetPercent(-20);
+        right_motor.SetPercent(20);
+        left_motor.SetPercent(20);
     }
 
     LCD.WriteLine("Switches hit moving foward");
@@ -196,7 +233,7 @@ int main(){
     turnLeft(tcount,tpercent);
 
     //4'
-    moveForward(330,percent);
+    moveForward(290,percent);
 
     //90*
     turnRight(tcount,tpercent);
