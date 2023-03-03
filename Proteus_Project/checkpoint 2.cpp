@@ -6,18 +6,20 @@
 
 
 //Declarations for encoders & motors
-AnalogInputPin CdS_cell (FEHIO::P0_1);
-DigitalEncoder right_encoder(FEHIO::P1_0);
-DigitalEncoder left_encoder(FEHIO::P1_1);
+AnalogInputPin CdS_cell (FEHIO::P1_0);
+DigitalEncoder right_encoder(FEHIO::P0_0);
+DigitalEncoder left_encoder(FEHIO::P3_0);
 FEHMotor right_motor(FEHMotor::Motor1,9.0);
 FEHMotor left_motor(FEHMotor::Motor0,9.0);
-DigitalInputPin micro_left(FEHIO::P0_0);
-DigitalInputPin micro_right(FEHIO::P3_0);
+DigitalInputPin micro_left(FEHIO::P3_1);
+DigitalInputPin micro_right(FEHIO::P0_1);
 
 void turnLeft(int tcount, int tpercent);
 void turnRight(int tcount, int tpercent);
 void moveForward(int counts,int percent);
 void moveBackward(int counts,int percent);
+void turnOnlyLeft(int tcount, int tpercent);
+void turnOnlyRight(int tcount, int tpercent);
 void zero();
 void boardingPass(boolean red);
 
@@ -54,6 +56,47 @@ void moveBackward(int counts, int percent){
 
     //turn motors off
     zero();
+}
+
+void turnOnlyRight(int tcount, int tpercent){
+    // reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    // motor percents 
+    
+    left_motor.SetPercent(tpercent);
+
+    // keep running motors while average of turn counts is less then tcount
+    while(left_encoder.Counts() < tcount);
+
+    // turn off motors
+    zero();
+}
+
+void turnOnlyLeft(int tcount, int tpercent){
+    // reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    // motor percents 
+    
+    right_motor.SetPercent(tpercent);
+    
+
+    // keep running motors while average of turn counts is less then tcount
+    while(right_encoder.Counts() < tcount);
+
+    // turn off motors
+    zero();
+}
+void print_CdS()
+{
+    while(true)
+    {
+        LCD.WriteAt(CdS_cell.Value(), 240, 20);
+        LCD.Clear();
+    }
 }
 
 void zero(){
@@ -104,15 +147,40 @@ void boardingPass(boolean red)
     * button is pressed
     */
 
-    turnOnlyLeft()
+    //90 deg
+    turnLeft();
+
+    //move in front of respective button
     if(red) 
     {
-
+        moveForward();
     }
     else
     {
-
+        moveForward();
     }
+
+    //now back is facing kiosk
+    turnRight();
+    
+    //while the switches are both unpressed back up into ticket booth
+    while (micro_right.Value() && micro_left.Value())
+    {
+        //move backward
+        right_motor.SetPercent(20);
+        left_motor.SetPercent(20);
+    }
+
+    //return to same point
+    if(red) 
+    {
+        moveForward();
+    }
+    else
+    {
+        moveForward();
+    }
+
 }
 
 int main(){
