@@ -224,32 +224,7 @@ int main(){
     //move up ramp, 12'
     moveForward(600,upRampPercent);
 
-    LCD.WriteLine("Moving Towards Pass Port Stamp");
-
-    //move forward towards passport stamp, 8'
-    moveForward(400,percent);
-
-    LCD.Clear(BLACK);
-
-    LCD.WriteLine("Turning Left");
-
-    //90*
-    turnLeft(tcount,tpercent);
-
-    LCD.WriteLine("Moving Foward");
-
-    //towards plane
-    moveForward(500,percent);
-
-    LCD.WriteLine("Turning Left");
-
-    //robot is now facing away from kiosk after a 90* turn
-    turnLeft(tcount,tpercent);
-
-    LCD.WriteLine("Moving Backward");
-
-    //get over plane nose to read value
-    moveBackward(520,percent);
+    //line following to light at nose of plane
 
     //read value of CdS cell to determine boarding pass
     int val = CdS_Cell.Value();
