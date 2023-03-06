@@ -6,7 +6,6 @@
 
 
 //Declarations for encoders & motors
-<<<<<<< Updated upstream
 AnalogInputPin CdS_cell (FEHIO::P1_0);
 DigitalEncoder right_encoder(FEHIO::P0_0);
 DigitalEncoder left_encoder(FEHIO::P3_0);
@@ -14,25 +13,13 @@ FEHMotor right_motor(FEHMotor::Motor1,9.0);
 FEHMotor left_motor(FEHMotor::Motor0,9.0);
 DigitalInputPin micro_left(FEHIO::P3_1);
 DigitalInputPin micro_right(FEHIO::P0_1);
-=======
-AnalogInputPin CdS_cell (FEHIO::P0_1);
-DigitalEncoder right_encoder(FEHIO::P1_0);
-DigitalEncoder left_encoder(FEHIO::P1_1);
-FEHMotor right_motor(FEHMotor::Motor1,9.0);
-FEHMotor left_motor(FEHMotor::Motor0,9.0);
-DigitalInputPin micro_left(FEHIO::P0_0);
-DigitalInputPin micro_right(FEHIO::P3_0);
->>>>>>> Stashed changes
 
 void turnLeft(int tcount, int tpercent);
 void turnRight(int tcount, int tpercent);
 void moveForward(int counts,int percent);
 void moveBackward(int counts,int percent);
-<<<<<<< Updated upstream
 void turnOnlyLeft(int tcount, int tpercent);
 void turnOnlyRight(int tcount, int tpercent);
-=======
->>>>>>> Stashed changes
 void zero();
 void boardingPass(boolean red);
 
@@ -71,7 +58,6 @@ void moveBackward(int counts, int percent){
     zero();
 }
 
-<<<<<<< Updated upstream
 void turnOnlyRight(int tcount, int tpercent){
     // reset encoder counts
     right_encoder.ResetCounts();
@@ -113,8 +99,6 @@ void print_CdS()
     }
 }
 
-=======
->>>>>>> Stashed changes
 void zero(){
     //Turn off motors
     right_motor.Stop();
@@ -158,7 +142,6 @@ void turnLeft(int tcount, int tpercent)
 
 void boardingPass(boolean red)
 {
-<<<<<<< Updated upstream
     /* Robot starts on nose of the plane facing towards the ramps,
     * moves to press the correct button, and then stops when the
     * button is pressed
@@ -198,7 +181,6 @@ void boardingPass(boolean red)
         moveForward();
     }
 
-=======
     /* Robot starts on nose of the plane facing towards the, moves to press the correct button, and then stops when the button is pressed
     */
     if(red)
@@ -209,7 +191,6 @@ void boardingPass(boolean red)
     {
 
     }
->>>>>>> Stashed changes
 }
 
 int main(){
@@ -252,10 +233,7 @@ int main(){
     LCD.WriteLine("Moving Up Ramp")
     //move up ramp, 12'
     moveForward(600,upRampPercent);
-
-<<<<<<< Updated upstream
     //line following to light at nose of plane
-=======
     LCD.WriteLine("Moving Towards Pass Port Stamp");
 
     //move forward towards passport stamp, 8'
@@ -282,7 +260,6 @@ int main(){
 
     //get over plane nose to read value
     moveBackward(520,percent);
->>>>>>> Stashed changes
 
     //read value of CdS cell to determine boarding pass
     int val = CdS_Cell.Value();
