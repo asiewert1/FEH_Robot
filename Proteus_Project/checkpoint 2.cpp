@@ -4,6 +4,20 @@
 #include <FEHMotor.h>
 #include <FEHRPS.h>
 
+//for line following
+#define STRAIGHT 15
+#define FIX 10
+
+//coordinates for nose of plane light
+#define NOSE_X 
+#define NOSE_Y
+
+enum LineStates
+{
+    MIDDLE,
+    RIGHT,
+    LEFT
+};
 
 //Declarations for encoders & motors
 AnalogInputPin CdS_cell (FEHIO::P1_0);
@@ -13,6 +27,9 @@ FEHMotor right_motor(FEHMotor::Motor1,9.0);
 FEHMotor left_motor(FEHMotor::Motor0,9.0);
 DigitalInputPin micro_left(FEHIO::P3_1);
 DigitalInputPin micro_right(FEHIO::P0_1);
+AnalogInputPin rightOpt(FEHIO::P2_0);
+AnalogInputPin leftOpt(FEHIO::P2_2);
+AnalogInputPin middleOpt(FEHIO::P2_1);
 
 void turnLeft(int tcount, int tpercent);
 void turnRight(int tcount, int tpercent);
@@ -193,6 +210,78 @@ void boardingPass(boolean red)
     }
 }
 
+void followLine(){
+    int state = RIGHT; // Set the initial state
+
+    LCD.Clear();
+
+    LCD.WriteAt(rightOpt.Value(), 0, 0);
+    LCD.WriteAt(middleOpt.Value(), 0, 20);
+    LCD.WriteAt(leftOpt.Value(), 0, 40);
+
+    switch(state) {
+        case MIDDLE:
+            right_motor.SetPercent(STRAIGHT);
+            left_motor.SetPercent(STRAIGHT);
+            LCD.WriteAt("Straight", 0, 60);
+    
+        /* Drive */
+
+        if (rightOpt.Value()>2.1 ) {
+
+            state = RIGHT; // update a new state
+        }
+        /* Code for if left sensor is on the line */
+
+        if (leftOpt.Value()>2.1) {
+
+            state = LEFT; // update a new state
+        }
+
+        break;
+        
+        case RIGHT:
+        
+            left_motor.SetPercent(STRAIGHT);
+            right_motor.SetPercent(FIX);
+            LCD.WriteAt("RIGHT", 0, 60);
+
+        /* Drive */
+
+        if(middleOpt.Value()>2.1 ) 
+        {
+            
+            state = MIDDLE;
+        }
+        
+        break;
+        
+        // If the left sensor is on the line...
+        case LEFT:
+
+        left_motor.SetPercent(FIX);
+        right_motor.SetPercent(STRAIGHT);
+        LCD.WriteAt("LEFT", 0, 60);
+
+        if(middleOpt.Value()>2.1) 
+        {
+            
+            state = MIDDLE;
+        }
+        /* Mirror operation of RIGHT state */
+        break;
+        
+        default: // Error. Something is very wrong.
+            left_motor.SetPercent(0);
+            right_motor.SetPercent(0);
+        break;
+
+    }
+
+    // Sleep a bit 
+    Sleep(500);
+}
+
 int main(){
 
     float x, y; //for touch screen
@@ -233,34 +322,13 @@ int main(){
     LCD.WriteLine("Moving Up Ramp")
     //move up ramp, 12'
     moveForward(600,upRampPercent);
+
     //line following to light at nose of plane
-    LCD.WriteLine("Moving Towards Pass Port Stamp");
-
-    //move forward towards passport stamp, 8'
-    moveForward(400,percent);
-
-    LCD.Clear(BLACK);
-
-    LCD.WriteLine("Turning Left");
-
-    //90*
-    turnLeft(tcount,tpercent);
-
-    LCD.WriteLine("Moving Foward");
-
-    //towards plane
-    moveForward(500,percent);
-
-    LCD.WriteLine("Turning Left");
-
-    //robot is now facing away from kiosk after a 90* turn
-    turnLeft(tcount,tpercent);
-
-    LCD.WriteLine("Moving Backward");
-
-    //get over plane nose to read value
-    moveBackward(520,percent);
-
+    while ((RPS.X()<NOSE_X-1 || RPS.X()>NOSE_X+1) && (RPS.Y()<NOSE_Y-1 || RPS.Y()>NOSE_Y+1))
+    {
+        followLine();
+    }
+    
     //read value of CdS cell to determine boarding pass
     int val = CdS_Cell.Value();
     boolean red = (val<#####);
