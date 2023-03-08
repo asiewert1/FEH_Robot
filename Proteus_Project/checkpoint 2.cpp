@@ -5,7 +5,7 @@
 #include <FEHRPS.h>
 
 //for line following
-#define STRAIGHT 17
+#define STRAIGHT 22
 #define FIX 10
 
 //line following states
