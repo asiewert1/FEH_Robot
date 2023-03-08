@@ -295,7 +295,6 @@ int main(){
     while(!LCD.Touch(&x,&y)); //Wait for screen to be pressed
     while(LCD.Touch(&x,&y)); //Wait for screen to be unpressed  
 
-
     //count for turns. will turn 90 deg
     int tcount= 225;
     int tpercent=25;
@@ -313,18 +312,24 @@ int main(){
     while(CdS_cell.Value()>2){}
 
     LCD.WriteLine("Light Seen");
-    
+
+    //is adjusting to be facing ramp
+    LCD.WriteLine("Turning to face Ramp");
+    turnOnlyRight(415,tpercent);
+    moveForward(80,percent);
+    turnOnlyLeft(135,tpercent);
+
     LCD.WriteLine("Moving Foward to Ramp");
 
      //move to ramp, 
-    moveForward(550,percent);
+    moveForward(330,percent);
 
     LCD.WriteLine("Moving Up Ramp")
     //move up ramp, 12'
     moveForward(600,upRampPercent);
 
     //line following to light at nose of plane
-    while ((RPS.X()<NOSE_X-1 || RPS.X()>NOSE_X+1) && (RPS.Y()<NOSE_Y-1 || RPS.Y()>NOSE_Y+1))
+    while (CdS_Cell.Value()>####)
     {
         followLine();
     }
