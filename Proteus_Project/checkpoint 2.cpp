@@ -5,8 +5,8 @@
 #include <FEHRPS.h>
 
 //for line following
-#define STRAIGHT 15
-#define FIX 10
+#define STRAIGHT -15
+#define FIX -10
 
 //coordinates for nose of plane light
 #define NOSE_X 
@@ -297,10 +297,10 @@ int main(){
 
     //count for turns. will turn 90 deg
     int tcount= 225;
-    int tpercent=25;
+    int tpercent=-25;
 
     int upRampPercent= 40;
-    int percent= 25;
+    int percent= -25;
 
     LCD.Clear(BLACK);
 
@@ -329,7 +329,7 @@ int main(){
     moveForward(600,upRampPercent);
 
     //line following to light at nose of plane
-    while (CdS_Cell.Value()>####)
+    while (CdS_Cell.Value()>1)
     {
         followLine();
     }
