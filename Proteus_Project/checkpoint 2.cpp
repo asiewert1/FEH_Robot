@@ -5,8 +5,8 @@
 #include <FEHRPS.h>
 
 //for line following
-#define STRAIGHT -15
-#define FIX -10
+#define STRAIGHT -16
+#define FIX -12
 
 //coordinates for nose of plane light
 #define NOSE_X 
@@ -218,76 +218,46 @@ void followLine(){
     LCD.WriteAt(middleOpt.Value(), 0, 20);
     LCD.WriteAt(leftOpt.Value(), 0, 40);
 
-    switch(state) {
-        case LINE_ON_RIGHT:
-        //right turn
-            right_motor.SetPercent(FIX); //goes slower
-            left_motor.SetPercent(STRAIGHT);
-            LCD.WriteAt("Line on right", 0, 60);
-    
-        /* Drive */
-
-        if (rightOpt.Value()>2.1 ) {
-
-            state = ON_LINE_FIRST; // update a new state
-        }
-        /* Code for if left sensor is on the line */
-
-        break;
+    while (CdS_ell.Value()>1){
+        switch(state) {
+            case LINE_ON_RIGHT:
+            //right turn
+                right_motor.SetPercent(FIX); //goes slower
+                left_motor.SetPercent(STRAIGHT);
+                LCD.Clear();
+                LCD.WriteAt("Line on right", 0, 60);
         
-        //on line by zigging ot the right
-        case ON_LINE_FIRST:
-        
-        //right turn
+            /* Drive */
+
+            if (rightOpt.Value()<2.8 ) {
+
+                state = LINE_ON_LEFT; // update a new state
+            }
+            /* Code for if left sensor is on the line */
+
+            break;
+            
+            // If the left sensor is on the line...
+            case LINE_ON_LEFT:
+
+            //turn left
             left_motor.SetPercent(FIX);
             right_motor.SetPercent(STRAIGHT);
-            LCD.WriteAt("On line, going right", 0, 60);
+            LCD.Clear();
+            LCD.WriteAt("Line on left", 0, 60);
 
-        /* Drive */
-
-        if(leftOpt.Value()>2.1 ) 
-        {   //sees line w left
-            state = LINE_ON_LEFT;
-        }
-        
-        break;
-        
-        // If the left sensor is on the line...
-        case LINE_ON_LEFT:
-
-        //turn left
-        left_motor.SetPercent(FIX);
-        right_motor.SetPercent(STRAIGHT);
-        LCD.WriteAt("Line on left", 0, 60);
-
-        if(leftOpt.Value()>2.1) 
-        {   //sees line w left
-            state = ON_LINE_SECOND;
-        }
-        
-        break;
-
-        //on line by zigging ot the left
-        case ON_LINE_SECOND:
-
-        //turn right
-        left_motor.SetPercent(FIX);
-        right_motor.SetPercent(STRAIGHT);
-        LCD.WriteAt("On line, going left", 0, 60);
-
-        if(rightOpt.Value()>2.1) 
-        {
+            if(leftOpt.Value()<2.8) 
+            {   //sees line w left
+                state = LINE_ON_RIGHT;
+            }
             
-            state = LINE_ON_RIGHT;
+            break;
+            
+            default: // Error. Something is very wrong.
+                left_motor.SetPercent(0);
+                right_motor.SetPercent(0);
+            break;
         }
-        
-        break;
-        
-        default: // Error. Something is very wrong.
-            left_motor.SetPercent(0);
-            right_motor.SetPercent(0);
-        break;
-
     }
 
     // Sleep a bit 
@@ -336,19 +306,19 @@ int main(){
      //move to ramp, 
     moveForward(330,percent);
 
-    LCD.WriteLine("Moving Up Ramp")
+    LCD.WriteLine("Moving Up Ramp");
     //move up ramp, 12'
     moveForward(600,upRampPercent);
 
+    
+    moveForward(120,percent);
+
     //line following to light at nose of plane
-    while (CdS_Cell.Value()>1)
-    {
-        followLine();
-    }
+    followLine();
     
     //read value of CdS cell to determine boarding pass
-    int val = CdS_Cell.Value();
+    int val = CdS_cell.Value();
     bool red = (val>.3);
 
-    boardingPass(red);
+    //boardingPass(red);
 }
