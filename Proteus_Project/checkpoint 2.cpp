@@ -12,12 +12,11 @@
 #define NOSE_X 
 #define NOSE_Y
 
-enum LineStates
-{
-    MIDDLE,
-    RIGHT,
-    LEFT
-};
+//line following states
+#define LINE_ON_RIGHT 0
+#define ON_LINE_FIRST 1
+#define LINE_ON_LEFT 2
+#define ON_LINE_SECOND 3
 
 //Declarations for encoders & motors
 AnalogInputPin CdS_cell (FEHIO::P1_0);
@@ -211,7 +210,7 @@ void boardingPass(bool red)
 }
 
 void followLine(){
-    int state = RIGHT; // Set the initial state
+    int state = LINE_ON_LEFT; // Set the initial state
 
     LCD.Clear();
 
@@ -220,55 +219,68 @@ void followLine(){
     LCD.WriteAt(leftOpt.Value(), 0, 40);
 
     switch(state) {
-        case MIDDLE:
-            right_motor.SetPercent(STRAIGHT);
+        case LINE_ON_RIGHT:
+        //right turn
+            right_motor.SetPercent(FIX); //goes slower
             left_motor.SetPercent(STRAIGHT);
-            LCD.WriteAt("Straight", 0, 60);
+            LCD.WriteAt("Line on right", 0, 60);
     
         /* Drive */
 
         if (rightOpt.Value()>2.1 ) {
 
-            state = RIGHT; // update a new state
+            state = ON_LINE_FIRST; // update a new state
         }
         /* Code for if left sensor is on the line */
 
-        if (leftOpt.Value()>2.1) {
-
-            state = LEFT; // update a new state
-        }
-
         break;
         
-        case RIGHT:
+        //on line by zigging ot the right
+        case ON_LINE_FIRST:
         
-            left_motor.SetPercent(STRAIGHT);
-            right_motor.SetPercent(FIX);
-            LCD.WriteAt("RIGHT", 0, 60);
+        //right turn
+            left_motor.SetPercent(FIX);
+            right_motor.SetPercent(STRAIGHT);
+            LCD.WriteAt("On line, going right", 0, 60);
 
         /* Drive */
 
-        if(middleOpt.Value()>2.1 ) 
-        {
-            
-            state = MIDDLE;
+        if(leftOpt.Value()>2.1 ) 
+        {   //sees line w left
+            state = LINE_ON_LEFT;
         }
         
         break;
         
         // If the left sensor is on the line...
-        case LEFT:
+        case LINE_ON_LEFT:
 
+        //turn left
         left_motor.SetPercent(FIX);
         right_motor.SetPercent(STRAIGHT);
-        LCD.WriteAt("LEFT", 0, 60);
+        LCD.WriteAt("Line on left", 0, 60);
 
-        if(middleOpt.Value()>2.1) 
+        if(leftOpt.Value()>2.1) 
+        {   //sees line w left
+            state = ON_LINE_SECOND;
+        }
+        
+        break;
+
+        //on line by zigging ot the left
+        case ON_LINE_SECOND:
+
+        //turn right
+        left_motor.SetPercent(FIX);
+        right_motor.SetPercent(STRAIGHT);
+        LCD.WriteAt("On line, going left", 0, 60);
+
+        if(rightOpt.Value()>2.1) 
         {
             
-            state = MIDDLE;
+            state = LINE_ON_RIGHT;
         }
-        /* Mirror operation of RIGHT state */
+        
         break;
         
         default: // Error. Something is very wrong.
@@ -299,7 +311,7 @@ int main(){
     int tcount= 225;
     int tpercent=-25;
 
-    int upRampPercent= 40;
+    int upRampPercent= -40;
     int percent= -25;
 
     LCD.Clear(BLACK);
@@ -336,7 +348,7 @@ int main(){
     
     //read value of CdS cell to determine boarding pass
     int val = CdS_Cell.Value();
-    bool red = (val<#####);
+    bool red = (val>.3);
 
     boardingPass(red);
 }
