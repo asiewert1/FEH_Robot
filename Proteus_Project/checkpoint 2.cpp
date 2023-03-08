@@ -5,18 +5,12 @@
 #include <FEHRPS.h>
 
 //for line following
-#define STRAIGHT -16
-#define FIX -12
-
-//coordinates for nose of plane light
-#define NOSE_X 
-#define NOSE_Y
+#define STRAIGHT 17
+#define FIX 10
 
 //line following states
 #define LINE_ON_RIGHT 0
-#define ON_LINE_FIRST 1
-#define LINE_ON_LEFT 2
-#define ON_LINE_SECOND 3
+#define LINE_ON_LEFT 1
 
 //Declarations for encoders & motors
 AnalogInputPin CdS_cell (FEHIO::P1_0);
@@ -156,58 +150,58 @@ void turnLeft(int tcount, int tpercent)
     zero();
 }
 
-void boardingPass(bool red)
-{
-    /* Robot starts on nose of the plane facing towards the ramps,
-    * moves to press the correct button, and then stops when the
-    * button is pressed
-    */
+// void boardingPass(bool red)
+// {
+//     /* Robot starts on nose of the plane facing towards the ramps,
+//     * moves to press the correct button, and then stops when the
+//     * button is pressed
+//     */
 
-    //90 deg
-    turnLeft();
+//     //90 deg
+//     turnLeft();
 
-    //move in front of respective button
-    if(red) 
-    {
-        moveForward();
-    }
-    else
-    {
-        moveForward();
-    }
+//     //move in front of respective button
+//     if(red) 
+//     {
+//         moveForward();
+//     }
+//     else
+//     {
+//         moveForward();
+//     }
 
-    //now back is facing kiosk
-    turnRight();
+//     //now back is facing kiosk
+//     turnRight();
     
-    //while the switches are both unpressed back up into ticket booth
-    while (micro_right.Value() && micro_left.Value())
-    {
-        //move backward
-        right_motor.SetPercent(20);
-        left_motor.SetPercent(20);
-    }
+//     //while the switches are both unpressed back up into ticket booth
+//     while (micro_right.Value() && micro_left.Value())
+//     {
+//         //move backward
+//         right_motor.SetPercent(20);
+//         left_motor.SetPercent(20);
+//     }
 
-    //return to same point
-    if(red) 
-    {
-        moveForward();
-    }
-    else
-    {
-        moveForward();
-    }
+//     //return to same point
+//     if(red) 
+//     {
+//         moveForward();
+//     }
+//     else
+//     {
+//         moveForward();
+//     }
 
-    /* Robot starts on nose of the plane facing towards the, moves to press the correct button, and then stops when the button is pressed
-    */
-    if(red)
-    {
+//     /* Robot starts on nose of the plane facing towards the, moves to press the correct button, and then stops when the button is pressed
+//     */
+//     if(red)
+//     {
 
-    }
-    else
-    {
+//     }
+//     else
+//     {
 
-    }
-}
+//     }
+// }
 
 void followLine(){
     int state = LINE_ON_LEFT; // Set the initial state
@@ -218,21 +212,22 @@ void followLine(){
     LCD.WriteAt(middleOpt.Value(), 0, 20);
     LCD.WriteAt(leftOpt.Value(), 0, 40);
 
-    while (CdS_ell.Value()>1){
+    while (CdS_cell.Value()>1){
         switch(state) {
             case LINE_ON_RIGHT:
             //right turn
-                right_motor.SetPercent(FIX); //goes slower
-                left_motor.SetPercent(STRAIGHT);
+                right_motor.SetPercent(STRAIGHT); //goes slower
+                left_motor.SetPercent(FIX);
                 LCD.Clear();
                 LCD.WriteAt("Line on right", 0, 60);
         
             /* Drive */
 
-            if (rightOpt.Value()<2.8 ) {
+            if (leftOpt.Value()<2.8) {
 
                 state = LINE_ON_LEFT; // update a new state
             }
+
             /* Code for if left sensor is on the line */
 
             break;
@@ -241,27 +236,25 @@ void followLine(){
             case LINE_ON_LEFT:
 
             //turn left
-            left_motor.SetPercent(FIX);
-            right_motor.SetPercent(STRAIGHT);
+            left_motor.SetPercent(STRAIGHT);
+            right_motor.SetPercent(FIX);
             LCD.Clear();
             LCD.WriteAt("Line on left", 0, 60);
 
-            if(leftOpt.Value()<2.8) 
+            if(rightOpt.Value()<2.8) 
             {   //sees line w left
                 state = LINE_ON_RIGHT;
             }
             
             break;
-            
+
             default: // Error. Something is very wrong.
-                left_motor.SetPercent(0);
-                right_motor.SetPercent(0);
+                zero();
             break;
         }
     }
 
-    // Sleep a bit 
-    Sleep(500);
+    zero();
 }
 
 int main(){
@@ -311,14 +304,24 @@ int main(){
     moveForward(600,upRampPercent);
 
     
-    moveForward(120,percent);
+    moveForward(300,percent);
+
+    //180 turn
+    turnRight(350,percent);
 
     //line following to light at nose of plane
     followLine();
     
     //read value of CdS cell to determine boarding pass
     int val = CdS_cell.Value();
-    bool red = (val>.3);
+    bool red = (val<.55);
+
+    if(red){
+        LCD.Clear(RED);
+    }
+    else{
+        LCD.Clear(BLUE);
+    }
 
     //boardingPass(red);
 }
