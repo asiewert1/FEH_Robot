@@ -38,7 +38,7 @@ void moveBackward(int counts,int percent);
 void turnOnlyLeft(int tcount, int tpercent);
 void turnOnlyRight(int tcount, int tpercent);
 void zero();
-void boardingPass(boolean red);
+void boardingPass(bool red);
 
 
 void moveForward(int counts, int percent){
@@ -157,7 +157,7 @@ void turnLeft(int tcount, int tpercent)
     zero();
 }
 
-void boardingPass(boolean red)
+void boardingPass(bool red)
 {
     /* Robot starts on nose of the plane facing towards the ramps,
     * moves to press the correct button, and then stops when the
@@ -336,7 +336,7 @@ int main(){
     
     //read value of CdS cell to determine boarding pass
     int val = CdS_Cell.Value();
-    boolean red = (val<#####);
+    bool red = (val<#####);
 
     boardingPass(red);
 }
