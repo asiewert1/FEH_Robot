@@ -313,7 +313,7 @@ int main(){
     followLine();
     
     //read value of CdS cell to determine boarding pass
-    int val = CdS_cell.Value();
+    float val = CdS_cell.Value();
     bool red = (val<.55);
 
     if(red){
