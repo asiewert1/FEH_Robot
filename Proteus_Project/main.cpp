@@ -41,6 +41,7 @@ DigitalEncoder left_encoder(FEHIO::P2_1);
 FEHMotor right_motor(FEHMotor::Motor1, 9.0);
 FEHMotor left_motor(FEHMotor::Motor0, 9.0);
 
+
 void set_points_of_interest()
 {
     // Declare variables
@@ -98,8 +99,8 @@ void set_points_of_interest()
 }
 
 /*
- * Pulse forward a short distance using time
- */
+* Pulse forward a short distance using time
+*/
 void pulse_forward(int percent, float seconds)
 {
     // Set both motors to desired percent
@@ -115,8 +116,8 @@ void pulse_forward(int percent, float seconds)
 }
 
 /*
- * Pulse counterclockwise a short distance using time
- */
+* Pulse counterclockwise a short distance using time
+*/
 void pulse_counterclockwise(int percent, float seconds)
 {
     // Set both motors to desired percent
@@ -132,8 +133,8 @@ void pulse_counterclockwise(int percent, float seconds)
 }
 
 /*
- * Move forward using shaft encoders where percent is the motor percent and counts is the distance to travel
- */
+* Move forward using shaft encoders where percent is the motor percent and counts is the distance to travel
+*/
 void move_forward(int percent, int counts) // using encoders
 {
     // Reset encoder counts
@@ -154,8 +155,8 @@ void move_forward(int percent, int counts) // using encoders
 }
 
 /*
- * Turn counterclockwise using shaft encoders where percent is the motor percent and counts is the distance to travel
- */
+* Turn counterclockwise using shaft encoders where percent is the motor percent and counts is the distance to travel
+*/
 void turn_counterclockwise(int percent, int counts)
 {
     // Reset encoder counts
@@ -176,8 +177,8 @@ void turn_counterclockwise(int percent, int counts)
 }
 
 /*
- * Use RPS to move to the desired x_coordinate based on the orientation of the QR code
- */
+* Use RPS to move to the desired x_coordinate based on the orientation of the QR code
+*/
 void check_x(float x_coordinate, int orientation)
 {
     // Determine the direction of the motors based on the orientation of the QR code
@@ -205,8 +206,8 @@ void check_x(float x_coordinate, int orientation)
 }
 
 /*
- * Use RPS to move to the desired y_coordinate based on the orientation of the QR code
- */
+* Use RPS to move to the desired y_coordinate based on the orientation of the QR code
+*/
 void check_y(float y_coordinate, int orientation)
 {
     // Determine the direction of the motors based on the orientation of the QR code
@@ -235,8 +236,8 @@ void check_y(float y_coordinate, int orientation)
 
 
 /*
- * Use RPS to move to the desired heading
- */
+* Use RPS to move to the desired heading
+*/
 void check_heading(float heading)
 {
     // If the robot is at the desired heading(
@@ -325,7 +326,7 @@ int main(void)
     SD.FPrintf(fptr, "Expected B Position: %f %f %f\n", B_x,B_y,B_heading);
     SD.FPrintf(fptr, "Actual B Position:   %f %f %f\n\n", RPS.X(), RPS.Y(),RPS.Heading());
 
-     //Log
+    //Log
 
     // B --> C
     move_forward(POWER, B_C_counts);
