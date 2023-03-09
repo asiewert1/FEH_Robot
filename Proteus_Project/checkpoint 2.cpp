@@ -62,7 +62,7 @@ void turnOnlyRight(int tcount, int tpercent);
 void zero();
 void boardingPass(bool red);
 
-class RPS{
+class RPS_Methods{
 
     private:
 
@@ -357,20 +357,20 @@ void boardingPass(bool red)
     */
 
     //90 deg
-    turnLeft();
+    turnLeft(225);
 
     //move in front of respective button
     if(red) 
     {
-        moveForward();
+        moveForward(300,percent);
     }
     else
     {
-        moveForward();
+        moveForward(500,percent);
     }
 
-    //now back is facing kiosk
-    turnRight();
+    //now back is facing kiosk, 90*
+    turnRight(225);
     
     //while the switches are both unpressed back up into ticket booth
     while (micro_right.Value() && micro_left.Value())
@@ -503,7 +503,7 @@ int main(){
     //line following to light at nose of plane
     followLine();
 
-    RPS position;
+    RPS_Methods position;
     position.check_x();
     position.check_y();
     position.check_heading();
