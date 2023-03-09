@@ -12,6 +12,11 @@
 #define LINE_ON_RIGHT 0
 #define LINE_ON_LEFT 1
 
+//coordinate of the light
+#define NOSE_X
+#define NOSE_Y
+
+
 //Declarations for encoders & motors
 AnalogInputPin CdS_cell (FEHIO::P1_0);
 DigitalEncoder right_encoder(FEHIO::P0_0);
@@ -20,8 +25,8 @@ FEHMotor right_motor(FEHMotor::Motor1,9.0);
 FEHMotor left_motor(FEHMotor::Motor0,9.0);
 DigitalInputPin micro_left(FEHIO::P3_1);
 DigitalInputPin micro_right(FEHIO::P0_1);
-AnalogInputPin rightOpt(FEHIO::P2_0);
-AnalogInputPin leftOpt(FEHIO::P2_2);
+AnalogInputPin rightOpt(FEHIO::P2_0); //put right in 2_2
+AnalogInputPin leftOpt(FEHIO::P2_2);    //left in 2_0
 AnalogInputPin middleOpt(FEHIO::P2_1);
 
 void turnLeft(int tcount, int tpercent);
@@ -150,58 +155,49 @@ void turnLeft(int tcount, int tpercent)
     zero();
 }
 
-// void boardingPass(bool red)
-// {
-//     /* Robot starts on nose of the plane facing towards the ramps,
-//     * moves to press the correct button, and then stops when the
-//     * button is pressed
-//     */
+void boardingPass(bool red)
+{
+    /* Robot starts on nose of the plane facing towards the ramps,
+    * moves to press the correct button, and then stops when the
+    * button is pressed
+    */
 
-//     //90 deg
-//     turnLeft();
+    //90 deg
+    turnLeft();
 
-//     //move in front of respective button
-//     if(red) 
-//     {
-//         moveForward();
-//     }
-//     else
-//     {
-//         moveForward();
-//     }
+    //move in front of respective button
+    if(red) 
+    {
+        moveForward();
+    }
+    else
+    {
+        moveForward();
+    }
 
-//     //now back is facing kiosk
-//     turnRight();
+    //now back is facing kiosk
+    turnRight();
     
-//     //while the switches are both unpressed back up into ticket booth
-//     while (micro_right.Value() && micro_left.Value())
-//     {
-//         //move backward
-//         right_motor.SetPercent(20);
-//         left_motor.SetPercent(20);
-//     }
+    //while the switches are both unpressed back up into ticket booth
+    while (micro_right.Value() && micro_left.Value())
+    {
+        //move backward
+        right_motor.SetPercent(20);
+        left_motor.SetPercent(20);
+    }
 
-//     //return to same point
-//     if(red) 
-//     {
-//         moveForward();
-//     }
-//     else
-//     {
-//         moveForward();
-//     }
+    //return to same point
+    if(red) 
+    {
+        moveForward();
+    }
+    else
+    {
+        moveForward();
+    }
 
-//     /* Robot starts on nose of the plane facing towards the, moves to press the correct button, and then stops when the button is pressed
-//     */
-//     if(red)
-//     {
 
-//     }
-//     else
-//     {
-
-//     }
-// }
+}
 
 void followLine(){
     int state = LINE_ON_LEFT; // Set the initial state
@@ -212,7 +208,8 @@ void followLine(){
     LCD.WriteAt(middleOpt.Value(), 0, 20);
     LCD.WriteAt(leftOpt.Value(), 0, 40);
 
-    while (CdS_cell.Value()>1){
+    while (CdS_cell.Value()>1&& micro_left.Value() && micro_right.Value()){
+        //while not over the light and the microswitches are unpressed
         switch(state) {
             case LINE_ON_RIGHT:
             //right turn
@@ -255,6 +252,11 @@ void followLine(){
     }
 
     zero();
+
+    if(CdS_cell.Value()>1){
+        //still hasn't found light
+        while()
+    }
 }
 
 int main(){
@@ -313,7 +315,7 @@ int main(){
     followLine();
     
     //read value of CdS cell to determine boarding pass
-    int val = CdS_cell.Value();
+    float val = CdS_cell.Value();
     bool red = (val<.55);
 
     if(red){
@@ -323,5 +325,5 @@ int main(){
         LCD.Clear(BLUE);
     }
 
-    //boardingPass(red);
+    boardingPass(red);
 }
