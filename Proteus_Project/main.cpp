@@ -4,67 +4,33 @@
 #include <FEHMotor.h>
 #include <FEHRPS.h>
 
+// Shaft encoding counts for CrayolaBots
+#define COUNTS_PER_INCH 40.5
+#define COUNTS_PER_DEGREE 2.48
+
 //Declarations for encoders & motors
+AnalogInputPin CdS_cell (FEHIO::P1_0);
 DigitalEncoder right_encoder(FEHIO::P0_0);
-DigitalEncoder left_encoder(FEHIO::P0_1);
-FEHMotor right_motor(FEHMotor::Motor3,9.0);
+DigitalEncoder left_encoder(FEHIO::P3_0);
+FEHMotor right_motor(FEHMotor::Motor1,9.0);
 FEHMotor left_motor(FEHMotor::Motor0,9.0);
+DigitalInputPin micro_left(FEHIO::P3_1);
+DigitalInputPin micro_right(FEHIO::P0_1);
+AnalogInputPin rightOpt(FEHIO::P2_0); //put right in 2_2
+AnalogInputPin leftOpt(FEHIO::P2_2);    //left in 2_0
+AnalogInputPin middleOpt(FEHIO::P2_1);
 
-void move_forward(int a, int b); 
-
-void turn_left(int a, int b);
-
-void turn_right(int a, int b);
-
-int main(void)
-{
-    int motor_percent = 25; //Input power level here
-    int expected_counts = 568; //Input theoretical counts here
-   
-
-    float x, y; //for touch screen
-
-    //Initialize the screen
-    LCD.Clear(BLACK);
-    LCD.SetFontColor(WHITE);
-
-    LCD.WriteLine("Shaft Encoder Exploration Test");
-    LCD.WriteLine("Touch the screen");
-    while(!LCD.Touch(&x,&y)); //Wait for screen to be pressed
-    while(LCD.Touch(&x,&y)); //Wait for screen to be unpressed
-
-    move_forward(motor_percent, expected_counts);
-    expected_counts = 225;
-    turn_left(motor_percent, expected_counts);
-    expected_counts = 406;
-    move_forward(motor_percent, expected_counts);
-    expected_counts = 225;
-    turn_right(motor_percent,expected_counts);
-    expected_counts= 162;
-    move_forward(motor_percent, expected_counts);
-    
-
-    Sleep(2.0); //Wait for counts to stabilize
-    //Print out data
-    LCD.Write("Theoretical Counts: ");
-    LCD.WriteLine(expected_counts);
-    LCD.Write("Motor Percent: ");
-    LCD.WriteLine(motor_percent);
-    LCD.Write("Actual LE Counts: ");
-    LCD.WriteLine(left_encoder.Counts());
-    LCD.Write("Actual RE Counts: ");
-    LCD.WriteLine(right_encoder.Counts());
+void turnLeft(int tcount, int tpercent);
+void turnRight(int tcount, int tpercent);
+void moveForward(int counts,int percent);
+void moveBackward(int counts,int percent);
+void turnOnlyLeft(int tcount, int tpercent);
+void turnOnlyRight(int tcount, int tpercent);
+void zero();
+void boardingPass(bool red);
 
 
-
-
-
-
-    return 0;
-}
-
-void move_forward(int percent, int counts) //using encoders
-{
+void moveForward(int counts, int percent){
     //Reset encoder counts
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -77,50 +43,397 @@ void move_forward(int percent, int counts) //using encoders
     //keep running motors
     while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
 
-    //Turn off motors
-    right_motor.Stop();
-    left_motor.Stop();
+    //turn motors off
+    zero();
 }
 
-void turn_right(int percent, int counts) //using encoders
-
-{
-//Reset encoder counts
-
-right_encoder.ResetCounts();
-left_encoder.ResetCounts();
-
-//While the average of the left and right encoder is less than counts,
-
-//keep running motors
-
-right_motor.SetPercent(-percent);
-left_motor.SetPercent(percent);
-
-while((left_encoder.Counts() + right_encoder.Counts())/2. < counts);
-
-
-right_motor.Stop();
-left_motor.Stop();
-}
-
-
-void turn_left(int percent, int counts) //using encoders
-{
+void moveBackward(int counts, int percent){
     //Reset encoder counts
-
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
 
-    
-    right_motor.SetPercent(percent);
+    //Set both motors to desired percent
+    right_motor.SetPercent(-percent);
     left_motor.SetPercent(-percent);
-    
+
+    //While the average of the left and right encoder is less than counts,
+    //keep running motors
     while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
 
-    //Turn off motors
+    //turn motors off
+    zero();
+}
 
+void turnOnlyRight(int tcount, int tpercent){
+    // reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    // motor percents 
+    
+    left_motor.SetPercent(tpercent);
+
+    // keep running motors while average of turn counts is less then tcount
+    while(left_encoder.Counts() < tcount);
+
+    // turn off motors
+    zero();
+}
+
+void turnOnlyLeft(int tcount, int tpercent){
+    // reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    // motor percents 
+    
+    right_motor.SetPercent(tpercent);
+    
+
+    // keep running motors while average of turn counts is less then tcount
+    while(right_encoder.Counts() < tcount);
+
+    // turn off motors
+    zero();
+}
+void print_CdS()
+{
+    while(true)
+    {
+        LCD.WriteAt(CdS_cell.Value(), 240, 20);
+        LCD.Clear();
+    }
+}
+
+void zero(){
+    //Turn off motors
     right_motor.Stop();
     left_motor.Stop();
+}
+
+void turnRight(int tcount, int tpercent)
+{
+    // reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    // motor percents 
+    right_motor.SetPercent(-tpercent);
+    left_motor.SetPercent(tpercent);
+
+    // keep running motors while average of turn counts is less then tcount
+    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < tcount);
+
+    // turn off motors
+    zero();
+
+}
+
+void turnLeft(int tcount, int tpercent)
+{
+    // reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    // motor percents 
+    right_motor.SetPercent(tpercent);
+    left_motor.SetPercent(-tpercent);
+
+    // keep running motors while average of turn counts is less then tcount
+    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < tcount);
+
+    // turn off motors
+    zero();
+}
+
+// void boardingPass(bool red)
+// {
+//     /* Robot starts on nose of the plane facing towards the ramps,
+//     * moves to press the correct button, and then stops when the
+//     * button is pressed
+//     */
+
+//     //90 deg
+//     turnLeft(225);
+
+//     //move in front of respective button
+//     if(red) 
+//     {
+//         moveForward(300,percent);
+//     }
+//     else
+//     {
+//         moveForward(500,percent);
+//     }
+
+//     //now back is facing kiosk, 90*
+//     turnRight(225);
+    
+//     //while the switches are both unpressed back up into ticket booth
+//     while (micro_right.Value() && micro_left.Value())
+//     {
+//         //move backward
+//         right_motor.SetPercent(20);
+//         left_motor.SetPercent(20);
+//     }
+
+//     //return to same point
+//     if(red) 
+//     {
+//         moveForward();
+//     }
+//     else
+//     {
+//         moveForward();
+//     }
+
+
+// }
+
+// void followLine(){
+//     int state = LINE_ON_LEFT; // Set the initial state
+
+//     LCD.Clear();
+
+//     LCD.WriteAt(rightOpt.Value(), 0, 0);
+//     LCD.WriteAt(middleOpt.Value(), 0, 20);
+//     LCD.WriteAt(leftOpt.Value(), 0, 40);
+
+//     while (CdS_cell.Value()>1&& micro_left.Value() && micro_right.Value()){
+//         //while not over the light and the microswitches are unpressed
+//         switch(state) {
+//             case LINE_ON_RIGHT:
+//             //right turn
+//                 right_motor.SetPercent(STRAIGHT); //goes slower
+//                 left_motor.SetPercent(FIX);
+//                 LCD.Clear();
+//                 LCD.WriteAt("Line on right", 0, 60);
+        
+//             /* Drive */
+
+//             if (leftOpt.Value()<2.8) {
+
+//                 state = LINE_ON_LEFT; // update a new state
+//             }
+
+//             /* Code for if left sensor is on the line */
+
+//             break;
+            
+//             // If the left sensor is on the line...
+//             case LINE_ON_LEFT:
+
+//             //turn left
+//             left_motor.SetPercent(STRAIGHT);
+//             right_motor.SetPercent(FIX);
+//             LCD.Clear();
+//             LCD.WriteAt("Line on left", 0, 60);
+
+//             if(rightOpt.Value()<2.8) 
+//             {   //sees line w left
+//                 state = LINE_ON_RIGHT;
+//             }
+            
+//             break;
+
+//             default: // Error. Something is very wrong.
+//                 zero();
+//             break;
+//         }
+//     }
+
+//     zero();
+// }
+
+int main(){
+
+    float x, y; //for touch screen
+
+    //Initialize the screen
+    LCD.Clear(BLACK);
+    LCD.SetFontColor(WHITE);
+
+    LCD.WriteLine("Test");
+    LCD.WriteLine("Touch the screen");
+    while(!LCD.Touch(&x,&y)); //Wait for screen to be pressed
+    while(LCD.Touch(&x,&y)); //Wait for screen to be unpressed  
+
+    //count for turns. will turn 90 deg
+    int tcount= 225;
+    int tpercent=-25;
+
+    int upRampPercent= -40;
+    int percent= -25;
+
+    LCD.Clear(BLACK);
+
+    //wait for light to turn on
+
+    LCD.WriteLine("Waiting for Light");
+
+    
+    while(CdS_cell.Value()>2){}
+
+    LCD.WriteLine("Light Seen");
+
+    //is adjusting to be facing ramp
+    LCD.WriteLine("Turning to face Ramp");
+    turnOnlyRight(415,tpercent);
+    moveForward(80,percent);
+    turnOnlyLeft(135,tpercent);
+
+    LCD.WriteLine("Moving Foward to Ramp");
+
+     //move to ramp, 
+    moveForward(330,percent);
+
+    LCD.WriteLine("Moving Up Ramp");
+    //move up ramp, 12'
+    moveForward(600,upRampPercent);
+
+    moveForward(300,percent);
+
+    //90* turn left
+    turnLeft(225,percent);
+
+    LCD.WriteLine("Aligning on wall");
+    
+    //run into wall to align
+    moveBackward(250,percent);
+
+    LCD.WriteLine("Moving Towards Light");
+    moveForward(900, percent);
+
+    // Turn right 90*
+    turnRight(225,percent);
+
+    //move over light
+    LCD.WriteLine("Finding light...");
+    float t_now = TimeNow();
+    float t_moment = TimeNow();
+    left_motor.SetPercent(percent);
+    right_motor.SetPercent(percent);
+    while ((CdS_cell.Value() > 2) && (t_moment - t_now < 10))
+    {
+        t_moment = TimeNow();
+    }
+
+    Sleep(250);
+
+    // Checking if the CdS cell was not reached after 20 seconds of travelling
+    if (t_moment - t_now >= 10)
+    {
+        // Moves backward until the same y value as light has been reached (~5 in)
+        moveBackward(200, percent);
+
+        // Turn clockwise 90* to face butt to light
+        turnRight(tcount, tpercent);
+
+        // Back up until light is reached
+        left_motor.SetPercent(20);
+        right_motor.SetPercent(20);
+        while ((CdS_cell.Value() > 2) && micro_left.Value() && micro_right.Value()) {}
+    }
+
+    // Stopping motors when they have found the light
+    zero();
+
+    LCD.WriteLine("Getting Light Value");
+    //get value of light
+    float val= CdS_cell.Value();
+
+    if(val<.5){
+        //red
+        LCD.WriteLine("Red");
+    }
+    else{
+        LCD.WriteLine("Blue");
+    }
+
+    if (t_moment - t_now >= 10)
+    {
+        // Turn counter clockwise to align with rest of code
+        turnLeft(tcount, tpercent);
+    }
+
+    Sleep(1000);
+
+    //move back enough to run into wall
+    moveBackward(400,percent+5);
+
+    turnRight(240,percent);
+
+    LCD.WriteLine("Aligning with wall");
+    //run into wall to align
+    // moveBackward(500,percent);
+    
+    left_motor.SetPercent(-percent);
+    right_motor.SetPercent(-percent);
+
+    while((micro_left.Value() ||  micro_right.Value()))
+    {
+
+    }
+
+    if(val<.5){
+        //red
+        LCD.WriteLine("Moving Towards Red Button");
+        moveForward(880,percent);
+    }
+    else
+    {   //blue
+        LCD.WriteLine("Moving Towards Blue Button");
+        moveForward(680,percent);
+    }
+
+    //back is facing kiosk
+    turnRight(245,percent);
+
+    LCD.WriteLine("Backing into button");
+    //move backward into the wall to hit the button
+    left_motor.SetPercent(25);
+    right_motor.SetPercent(25);
+
+    Sleep(5000);
+    // while(micro_left.Value() && micro_right.Value())
+    // {
+
+    // }
+    LCD.WriteLine("Going to sleep... zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+    Sleep(1000);
+
+    // Moving back to the ramp
+    LCD.Clear();
+    LCD.WriteLine("IM AWAKE");
+    LCD.WriteLine("Going back home");
+    moveForward(800, percent);
+
+    // Turns 90* clockwise to face butt to right wall
+    LCD.WriteLine("Turning to back into wall");
+    turnRight(tcount, tpercent);
+
+    // Move backward until microswitches bump wall
+    LCD.WriteLine("Backing into wall...");
+    right_motor.SetPercent(25);
+    left_motor.SetPercent(25);
+
+    // Waits until microswitches are pressed
+    while (micro_left.Value() && micro_right.Value()) {}
+
+    // Microswitches pressed, going forward a bit
+    LCD.WriteLine("Aligning with ramp");
+    moveForward(80, percent);
+
+    // Turning counter-clockwise 90*
+    LCD.WriteLine("Turning to go down ramp");
+    turnLeft(tcount, tpercent);
+
+    // Moving foward down ramp and away from this horrid place
+    LCD.WriteLine("Finally going down ramp...");
+    moveForward(1000, percent);
+
+    zero();
+
+    LCD.WriteLine("IM HOMEEEEEEE");
 
 }
