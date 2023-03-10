@@ -298,9 +298,9 @@ int main(){
     turnLeft(225,percent);
 
     //run into wall to align
-    moveForward(700,percent);
+    moveForward(1100,percent);
 
-    move moveBackward(400, percent);
+    moveBackward(500, percent);
 
     turnRight(225,percent);
 
@@ -324,16 +324,16 @@ int main(){
     turnLeft(225,percent);
 
     //run into wall to align
-    moveForward(400,percent);
+    moveForward(500,percent);
 
     if(val<.5){
         //red
-        moveBackward(700,percent);
+        moveBackward(400,percent);
 
     }
     else
     {   //blue
-        moveBackward(400,percent);
+        moveBackward(200,percent);
 
     }
 
