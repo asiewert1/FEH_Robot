@@ -298,9 +298,9 @@ int main(){
     turnLeft(225,percent);
 
     //run into wall to align
-    moveForward(1100,percent);
+    moveBackwards(150,percent);
 
-    moveBackward(500, percent);
+    moveForward(700, percent);
 
     turnRight(225,percent);
 
