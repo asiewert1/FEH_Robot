@@ -291,15 +291,16 @@ int main(){
     //move up ramp, 12'
     moveForward(600,upRampPercent);
 
-    
     moveForward(300,percent);
 
     //90* turn
     turnLeft(225,percent);
 
+    LCD.WriteLine("Aligning on wall");
     //run into wall to align
-    moveBackwards(150,percent);
+    moveBackward(150,percent);
 
+    LCD.WriteLine("Moving Towards Light");
     moveForward(700, percent);
 
     turnRight(225,percent);
@@ -307,6 +308,7 @@ int main(){
     //move over light
     moveForward(500,percent);
 
+    LCD.WriteLine("Getting Light Value");
     //get value of light
     float val= CdS_cell.Value();
 
@@ -321,25 +323,27 @@ int main(){
     //move back enough to run into wall
     moveBackward(200,percent+5);
 
-    turnLeft(225,percent);
+    turnRight(225,percent);
 
+    LCD.WriteLine("Aligning with wall");
     //run into wall to align
-    moveForward(500,percent);
+    moveBackward(500,percent);
 
     if(val<.5){
         //red
-        moveBackward(400,percent);
-
+        LCD.WriteLine("Moving Towards Red Button");
+        moveForward(400,percent);
     }
     else
     {   //blue
-        moveBackward(200,percent);
-
+        LCD.WriteLine("Moving Towards Blue Button");
+        moveForward(200,percent);
     }
 
     //back is facing kiosk
-    turnLeft(225,percent);
+    turnRight(225,percent);
 
+    LCD.WriteLine("Backing into button");
     //move backward into the wall to hit the button
     left_motor.SetPercent(25);
     right_motor.SetPercent(25);
