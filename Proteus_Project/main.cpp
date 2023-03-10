@@ -216,7 +216,7 @@ void check_y(float y_coordinate, int orientation)
     {
         power = -PULSE_POWER;
     }
-
+10
     // Check if receiving proper RPS coordinates and whether the robot is within an acceptable range
     while (RPS.Y() > -1 && (RPS.Y() < y_coordinate - 1 || RPS.Y() > y_coordinate + 1))
     {
