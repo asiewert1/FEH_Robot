@@ -15,7 +15,7 @@ DigitalInputPin micro_right(FEHIO::P0_1);
 AnalogInputPin rightOpt(FEHIO::P2_0); //put right in 2_2
 AnalogInputPin leftOpt(FEHIO::P2_2);    //left in 2_0
 AnalogInputPin middleOpt(FEHIO::P2_1);
-FEHMotor servo(FEHIO::P2_3);
+FEHMotor servo(FEHMotor::Motor3,9.0);
 DigitalInputPin micro_front(FEHIO::P1_1);
 
 void turnLeft(int tcount, int tpercent);
@@ -143,120 +143,22 @@ void turnLeft(int tcount, int tpercent)
     zero();
 }
 
-void boardingPass(bool red)
-{
-    /* Robot starts on nose of the plane facing towards the ramps,
-    * moves to press the correct button, and then stops when the
-    * button is pressed
-    */
-
-    //90 deg
-    turnLeft(225);
-
-    //move in front of respective button
-    if(red) 
-    {
-        moveForward(300,percent);
-    }
-    else
-    {
-        moveForward(500,percent);
-    }
-
-    //now back is facing kiosk, 90*
-    turnRight(225);
-    
-    //while the switches are both unpressed back up into ticket booth
-    while (micro_right.Value() && micro_left.Value())
-    {
-        //move backward
-        right_motor.SetPercent(20);
-        left_motor.SetPercent(20);
-    }
-
-    //return to same point
-    if(red) 
-    {
-        moveForward();
-    }
-    else
-    {
-        moveForward();
-    }
-
-
-}
-
-void followLine(){
-    int state = LINE_ON_LEFT; // Set the initial state
-
-    LCD.Clear();
-
-    LCD.WriteAt(rightOpt.Value(), 0, 0);
-    LCD.WriteAt(middleOpt.Value(), 0, 20);
-    LCD.WriteAt(leftOpt.Value(), 0, 40);
-
-    while (CdS_cell.Value()>1&& micro_left.Value() && micro_right.Value()){
-        //while not over the light and the microswitches are unpressed
-        switch(state) {
-            case LINE_ON_RIGHT:
-            //right turn
-                right_motor.SetPercent(STRAIGHT); //goes slower
-                left_motor.SetPercent(FIX);
-                LCD.Clear();
-                LCD.WriteAt("Line on right", 0, 60);
-        
-            /* Drive */
-
-            if (leftOpt.Value()<2.8) {
-
-                state = LINE_ON_LEFT; // update a new state
-            }
-
-            /* Code for if left sensor is on the line */
-
-            break;
-            
-            // If the left sensor is on the line...
-            case LINE_ON_LEFT:
-
-            //turn left
-            left_motor.SetPercent(STRAIGHT);
-            right_motor.SetPercent(FIX);
-            LCD.Clear();
-            LCD.WriteAt("Line on left", 0, 60);
-
-            if(rightOpt.Value()<2.8) 
-            {   //sees line w left
-                state = LINE_ON_RIGHT;
-            }
-            
-            break;
-
-            default: // Error. Something is very wrong.
-                zero();
-            break;
-        }
-    }
-
-    zero();
-}
-
 void setServoStart(){
 
-    servo.setPercent(15);
+    servo.SetPercent(15);
 
     while(micro_front.Value()){
     }
 
-    servo.setPercent(-15);
+    servo.SetPercent(-15);
     Sleep(3000);
     servo.Stop();
 }
 
 int main(){
 
-    setServoStart();
+    RPS.InitializeTouchMenu();
+    //setServoStart();
 
     float x, y; //for touch screen
 
@@ -287,17 +189,17 @@ int main(){
 
     LCD.WriteLine("Light Seen");
 
-    moveForward(200,percent);
+    moveForward(550,percent);
 
-    turnLeft(115,percent);
+    turnLeft(120,percent);
 
-    moveForward(300,percent);
+    moveForward(100,percent);
 
     LCD.WriteLine("Getting correct lever");
 
     int correctLever= RPS.GetCorrectLever();
 
-    LCD.WriteLine("Lever: %i",correctLever);
+    LCD.WriteLine(correctLever);
 
     if(correctLever==0){
         //left
@@ -305,11 +207,11 @@ int main(){
     }
     else if(correctLever==1){
         //middle
-        moveForward(250,percent);
+        moveForward(200,percent);
     }
     else{
         //right
-        moveForward(400,percent);
+        moveForward(300,percent);
     }
 
     turnLeft(tcount,tpercent);
@@ -319,9 +221,10 @@ int main(){
     //stop at lever
     zero();
 
-    servo.setPercent(50);
+    LCD.WriteLine("Flipping Lever");
+    //servo.setPercent(50);
     Sleep(2000);
-    servo.Stop();
+    //servo.Stop();
 
     moveBackward(100,percent);
     zero();
@@ -331,8 +234,8 @@ int main(){
     moveForward(100,percent);
     zero();
 
-    servo.setPercent(-15);
-    servo.Stop();
+    //servo.setPercent(-15);
+    //servo.Stop();
 
     //flip lever back
 }
