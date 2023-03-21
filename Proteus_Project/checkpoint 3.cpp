@@ -15,6 +15,8 @@ DigitalInputPin micro_right(FEHIO::P0_1);
 AnalogInputPin rightOpt(FEHIO::P2_0); //put right in 2_2
 AnalogInputPin leftOpt(FEHIO::P2_2);    //left in 2_0
 AnalogInputPin middleOpt(FEHIO::P2_1);
+FEHMotor servo(FEHIO::P2_3);
+DigitalInputPin micro_front(FEHIO::P1_1);
 
 void turnLeft(int tcount, int tpercent);
 void turnRight(int tcount, int tpercent);
@@ -240,7 +242,21 @@ void followLine(){
     zero();
 }
 
+void setServoStart(){
+
+    servo.setPercent(15);
+
+    while(micro_front.Value()){
+    }
+
+    servo.setPercent(-15);
+    Sleep(3000);
+    servo.Stop();
+}
+
 int main(){
+
+    setServoStart();
 
     float x, y; //for touch screen
 
@@ -273,13 +289,15 @@ int main(){
 
     moveForward(200,percent);
 
-    turnOnlyLeft(50,percent);
+    turnLeft(115,percent);
 
     moveForward(300,percent);
 
     LCD.WriteLine("Getting correct lever");
 
-    int correctLever= RPS.GetCorrectLetter();
+    int correctLever= RPS.GetCorrectLever();
+
+    LCD.WriteLine("Lever: %i",correctLever);
 
     if(correctLever==0){
         //left
@@ -301,9 +319,20 @@ int main(){
     //stop at lever
     zero();
 
-    //flip lever
+    servo.setPercent(50);
+    Sleep(2000);
+    servo.Stop();
 
-    Sleep(5200);
+    moveBackward(100,percent);
+    zero();
+
+    Sleep(5000);
+    
+    moveForward(100,percent);
+    zero();
+
+    servo.setPercent(-15);
+    servo.Stop();
 
     //flip lever back
 }
