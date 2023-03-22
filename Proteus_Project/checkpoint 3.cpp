@@ -93,6 +93,7 @@ void turnOnlyLeft(int tcount, int tpercent){
     // turn off motors
     zero();
 }
+
 void print_CdS()
 {
     while(true)
@@ -150,8 +151,8 @@ void setServoStart(){
     while(micro_front.Value()){
     }
 
-    servo.SetPercent(-30);
-    Sleep(6500);
+    servo.SetPercent(-60);
+    Sleep(4000);
     servo.Stop();
 }
 
@@ -193,11 +194,7 @@ int main(){
 
     Sleep(1000);
 
-    turnLeft(140,percent);
-
-    Sleep(1000);
-
-    
+    turnLeft(150,percent);
 
     Sleep(1000);
 
@@ -211,20 +208,19 @@ int main(){
 
     if(correctLever==0){
         //left
-        moveForward(50,percent);
     }
     else if(correctLever==1){
         //middle
-        moveForward(200,percent);
+        moveForward(175,percent);
     }
     else{
         //right
-        moveForward(350,percent);
+        moveForward(275,percent);
     }
 
     Sleep(1000);
-    turnLeft(tcount,tpercent);
-    moveBackward(100,percent);
+    turnLeft(230,tpercent);
+    moveBackward(150,percent);
 
     //stop at lever
     zero();
@@ -232,8 +228,8 @@ int main(){
     Sleep(1000);    
 
     LCD.WriteLine("Flipping Lever");
-    servo.SetPercent(75);
-    Sleep(2000);
+    servo.SetPercent(80);
+    Sleep(2500);
     servo.Stop();
 
     Sleep(1000);
