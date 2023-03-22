@@ -104,7 +104,7 @@ void print_CdS()
 }
 
 void zero(){
-    //Turn off motors
+    //Turn off motors 
     right_motor.Stop();
     left_motor.Stop();
 }
