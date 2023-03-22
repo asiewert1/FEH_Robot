@@ -145,20 +145,20 @@ void turnLeft(int tcount, int tpercent)
 
 void setServoStart(){
 
-    servo.SetPercent(15);
+    servo.SetPercent(75);
 
     while(micro_front.Value()){
     }
 
-    servo.SetPercent(-15);
-    Sleep(3000);
+    servo.SetPercent(-30);
+    Sleep(6500);
     servo.Stop();
 }
 
 int main(){
 
     RPS.InitializeTouchMenu();
-    //setServoStart();
+    setServoStart();
 
     float x, y; //for touch screen
 
@@ -189,11 +189,17 @@ int main(){
 
     LCD.WriteLine("Light Seen");
 
-    moveForward(550,percent);
+    moveForward(750,percent);
 
-    turnLeft(120,percent);
+    Sleep(1000);
 
-    moveForward(100,percent);
+    turnLeft(140,percent);
+
+    Sleep(1000);
+
+    
+
+    Sleep(1000);
 
     LCD.WriteLine("Getting correct lever");
 
@@ -201,9 +207,11 @@ int main(){
 
     LCD.WriteLine(correctLever);
 
+    Sleep(1000);
+
     if(correctLever==0){
         //left
-        moveForward(100,percent);
+        moveForward(50,percent);
     }
     else if(correctLever==1){
         //middle
@@ -211,31 +219,50 @@ int main(){
     }
     else{
         //right
-        moveForward(300,percent);
+        moveForward(350,percent);
     }
 
+    Sleep(1000);
     turnLeft(tcount,tpercent);
-
-    moveForward(100,percent);
+    moveBackward(100,percent);
 
     //stop at lever
     zero();
 
+    Sleep(1000);    
+
     LCD.WriteLine("Flipping Lever");
-    //servo.setPercent(50);
+    servo.SetPercent(75);
     Sleep(2000);
-    //servo.Stop();
+    servo.Stop();
+
+    Sleep(1000);
 
     moveBackward(100,percent);
     zero();
 
-    Sleep(5000);
+    Sleep(1000);
+
+    LCD.WriteLine("Waiting 5 Seconds");
+
+    //moves to down position
+    servo.SetPercent(75);
+    while(micro_front.Value()){}
+    servo.Stop();
+
+    Sleep(4000);
     
     moveForward(100,percent);
     zero();
 
-    //servo.setPercent(-15);
-    //servo.Stop();
+    Sleep(1000);
+
+    //lifts lever up
+    servo.SetPercent(-30);
+    Sleep(3000);
+
+    servo.Stop();
+    zero();
 
     //flip lever back
 }
