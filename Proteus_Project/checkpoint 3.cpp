@@ -146,13 +146,13 @@ void turnLeft(int tcount, int tpercent)
 
 void setServoStart(){
 
-    servo.SetPercent(75);
+    servo.SetPercent(-25);
 
     while(micro_front.Value()){
     }
 
-    servo.SetPercent(-60);
-    Sleep(4000);
+    servo.SetPercent(40);
+    Sleep(4200);
     servo.Stop();
 }
 
@@ -194,7 +194,7 @@ int main(){
 
     Sleep(1000);
 
-    turnLeft(150,percent);
+    turnLeft(160,percent);
 
     Sleep(1000);
 
@@ -208,19 +208,28 @@ int main(){
 
     if(correctLever==0){
         //left
+        moveForward(50,percent);
+        Sleep(1000);
+        turnLeft(250,tpercent);
+        moveBackward(60,percent);
+        
+
     }
     else if(correctLever==1){
         //middle
         moveForward(175,percent);
+        Sleep(1000);
+        turnLeft(250,tpercent);
+        moveBackward(20,percent);
     }
     else{
         //right
-        moveForward(275,percent);
+        moveForward(325,percent);
+        Sleep(1000);
+        turnLeft(250,tpercent);
+        moveBackward(50,percent);
     }
 
-    Sleep(1000);
-    turnLeft(230,tpercent);
-    moveBackward(150,percent);
 
     //stop at lever
     zero();
@@ -228,8 +237,8 @@ int main(){
     Sleep(1000);    
 
     LCD.WriteLine("Flipping Lever");
-    servo.SetPercent(80);
-    Sleep(2500);
+    servo.SetPercent(-25);
+    Sleep(6000);
     servo.Stop();
 
     Sleep(1000);
@@ -242,11 +251,11 @@ int main(){
     LCD.WriteLine("Waiting 5 Seconds");
 
     //moves to down position
-    servo.SetPercent(75);
+    servo.SetPercent(-25);
     while(micro_front.Value()){}
     servo.Stop();
 
-    Sleep(4000);
+    Sleep(5000);
     
     moveForward(100,percent);
     zero();
@@ -254,8 +263,8 @@ int main(){
     Sleep(1000);
 
     //lifts lever up
-    servo.SetPercent(-30);
-    Sleep(3000);
+    servo.SetPercent(30);
+    Sleep(2000);
 
     servo.Stop();
     zero();
