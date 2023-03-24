@@ -264,10 +264,11 @@ int main(){
 
     //lifts lever up
     servo.SetPercent(30);
-    Sleep(2000);
+    Sleep(2100);
 
     servo.Stop();
     zero();
 
+    moveBackward(100,percent);
     //flip lever back
 }
