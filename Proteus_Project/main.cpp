@@ -248,15 +248,13 @@ void check_heading(float heading)
     // If the robot is more than two (HEADING_TOLERANCE) to the right
     while (RPS.Heading() - heading < -HEADING_TOLERANCE)
     {
-        right_motor.SetPercent(PULSE_POWER);
-        Sleep(PULSE_TIME);
+        pulse_counterclockwise(PULSE_POWER,PULSE_TIME)
     }
 
     // If more than two (HEADING TOLERANCE) to the left
     while (RPS.Heading() - heading > HEADING_TOLERANCE)
     {
-        left_motor.SetPercent(PULSE_POWER);
-        Sleep(PULSE_TIME);
+        pulse_clockwise(PULSE_POWER,PULSE_TIME);
     }
 
     // You will need to fill out this one yourself and take into account
