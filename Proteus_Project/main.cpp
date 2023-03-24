@@ -212,11 +212,11 @@ void check_y(float y_coordinate, int orientation)
 {
     // Determine the direction of the motors based on the orientation of the QR code
     int power = PULSE_POWER;
-    if (orientation == MINUS)
+    if (orientation == PLUS)
     {
         power = -PULSE_POWER;
     }
-10
+
     // Check if receiving proper RPS coordinates and whether the robot is within an acceptable range
     while (RPS.Y() > -1 && (RPS.Y() < y_coordinate - 1 || RPS.Y() > y_coordinate + 1))
     {
@@ -248,13 +248,13 @@ void check_heading(float heading)
     // If the robot is more than two (HEADING_TOLERANCE) to the right
     while (RPS.Heading() - heading < -HEADING_TOLERANCE)
     {
-        pulse_counterclockwise(PULSE_POWER,PULSE_TIME)
+        pulse_counterclockwise(PULSE_POWER,PULSE_TIME);
     }
 
     // If more than two (HEADING TOLERANCE) to the left
     while (RPS.Heading() - heading > HEADING_TOLERANCE)
     {
-        pulse_clockwise(PULSE_POWER,PULSE_TIME);
+        pulse_counterclockwise(-PULSE_POWER,PULSE_TIME);
     }
 
     // You will need to fill out this one yourself and take into account
@@ -289,8 +289,7 @@ int main(void)
 
     // COMPLETE CODE HERE TO READ SD CARD FOR LOGGED X AND Y DATA POINTS
     FEHFile *fptr = SD.FOpen("RPS_POIs.txt", "r");
-    SD.FScanf(fptr, "%f%f", &A_x, &A_y);
-
+    SD.FScanf(fptr, "%f%f%f%f%f%f%f%f", &A_x, &A_y, &B_x, &B_y,&C_x, &C_y,&D_x, &D_y);
 
     SD.FClose(fptr);
 
