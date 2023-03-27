@@ -191,6 +191,7 @@ void check_x(float x_coordinate, int orientation)
     // Check if receiving proper RPS coordinates and whether the robot is within an acceptable range
     while (RPS.X() > -1 && (RPS.X() < x_coordinate - 1 || RPS.X() > x_coordinate + 1))
     {
+        LCD.WriteLine(RPS.X());
         if (RPS.X() < x_coordinate - 1)
         {
             // Pulse the motors for a short duration in the correct direction
@@ -212,14 +213,15 @@ void check_y(float y_coordinate, int orientation)
 {
     // Determine the direction of the motors based on the orientation of the QR code
     int power = PULSE_POWER;
-    if (orientation == PLUS)
+    if (orientation == MINUS)
     {
         power = -PULSE_POWER;
     }
 
     // Check if receiving proper RPS coordinates and whether the robot is within an acceptable range
     while (RPS.Y() > -1 && (RPS.Y() < y_coordinate - 1 || RPS.Y() > y_coordinate + 1))
-    {
+    {   
+        LCD.WriteLine(RPS.Y());
         if (RPS.Y() < y_coordinate - 1)
         {
             // Pulse the motors for a short duration in the correct direction
@@ -245,15 +247,32 @@ void check_heading(float heading)
     {
         LCD.WriteLine("Robot at correct heading");
     }
+
+    if(RPS.Heading()>340 || RPS.Heading()<20)
+    {
+        while (RPS.Heading() > 340)
+        {
+            LCD.WriteLine("pulsing left");
+            pulse_counterclockwise(PULSE_POWER-5,PULSE_TIME);
+        }
+
+        while (RPS.Heading() < 10)
+        {
+            LCD.WriteLine("pulsing right");
+            pulse_counterclockwise(-PULSE_POWER-5,PULSE_TIME);
+        }
+    }
     // If the robot is more than two (HEADING_TOLERANCE) to the right
     while (RPS.Heading() - heading < -HEADING_TOLERANCE)
     {
+        LCD.WriteLine("pulsing left");
         pulse_counterclockwise(PULSE_POWER,PULSE_TIME);
     }
 
     // If more than two (HEADING TOLERANCE) to the left
     while (RPS.Heading() - heading > HEADING_TOLERANCE)
     {
+        LCD.WriteLine("pulsing right");
         pulse_counterclockwise(-PULSE_POWER,PULSE_TIME);
     }
 
@@ -289,7 +308,10 @@ int main(void)
 
     // COMPLETE CODE HERE TO READ SD CARD FOR LOGGED X AND Y DATA POINTS
     FEHFile *fptr = SD.FOpen("RPS_POIs.txt", "r");
-    SD.FScanf(fptr, "%f%f%f%f%f%f%f%f", &A_x, &A_y, &B_x, &B_y,&C_x, &C_y,&D_x, &D_y);
+    SD.FScanf(fptr, "%f%f", &A_x, &A_y);
+    SD.FScanf(fptr, "%f%f",&B_x, &B_y);
+    SD.FScanf(fptr, "%f%f",&C_x, &C_y);
+    SD.FScanf(fptr, "%f%f",&D_x, &D_y);
 
     SD.FClose(fptr);
 
@@ -302,16 +324,16 @@ int main(void)
     B_C_counts = 810;
     C_D_counts = 810;
 
-    turn_90_counts = 240;
-    turn_180_counts = 480;
+    turn_90_counts = 223.2;
+    turn_180_counts = 446.4;
 
     
     // Open file pointer for writing
-    fptr = SD.FOpen("RESULTS.txt", "w");
+    FEHFile *fptr1 = SD.FOpen("RESULTS.txt", "w");
     
     // COMPLETE CODE HERE TO WRITE EXPECTED AND ACTUAL POSITION INFORMATION TO SD CARD
-    SD.FPrintf(fptr, "Expected A Position: %f %f %f\n", A_x,A_y,A_heading);
-    SD.FPrintf(fptr, "Actual A Position:   %f %f %f\n\n", RPS.X(), RPS.Y(),RPS.Heading());
+    SD.FPrintf(fptr1, "Expected A Position: %f %f %f\n", A_x,A_y,A_heading);
+    SD.FPrintf(fptr1, "Actual A Position:   %f %f %f\n\n", RPS.X(), RPS.Y(),RPS.Heading());
 
 
     // A --> B
@@ -320,8 +342,8 @@ int main(void)
     Sleep(1.0);
     
     // COMPLETE CODE HERE TO WRITE EXPECTED AND ACTUAL POSITION INFORMATION TO SD CARD
-    SD.FPrintf(fptr, "Expected B Position: %f %f %f\n", B_x,B_y,B_heading);
-    SD.FPrintf(fptr, "Actual B Position:   %f %f %f\n\n", RPS.X(), RPS.Y(),RPS.Heading());
+    SD.FPrintf(fptr1, "Expected B Position: %f %f %f\n", B_x,B_y,B_heading);
+    SD.FPrintf(fptr1, "Actual B Position:   %f %f %f\n\n", RPS.X(), RPS.Y(),RPS.Heading());
 
     //Log
 
@@ -333,8 +355,8 @@ int main(void)
     Sleep(1.0);
 
     // COMPLETE CODE HERE TO WRITE EXPECTED AND ACTUAL POSITION INFORMATION TO SD CARD
-    SD.FPrintf(fptr, "Expected C Position: %f %f %f\n", C_x,C_y,C_heading);
-    SD.FPrintf(fptr, "Actual C Position:   %f %f %f\n\n", RPS.X(), RPS.Y(),RPS.Heading());
+    SD.FPrintf(fptr1, "Expected C Position: %f %f %f\n", C_x,C_y,C_heading);
+    SD.FPrintf(fptr1, "Actual C Position:   %f %f %f\n\n", RPS.X(), RPS.Y(),RPS.Heading());
 
     // C --> D
     move_forward(POWER, C_D_counts);
@@ -345,11 +367,11 @@ int main(void)
     Sleep(1.0);
 
     // COMPLETE CODE HERE TO WRITE EXPECTED AND ACTUAL POSITION INFORMATION TO SD CARD
-    SD.FPrintf(fptr, "Expected D Position: %f %f %f\n", D_x,D_y,D_heading);
-    SD.FPrintf(fptr, "Actual D Position:   %f %f %f\n\n", RPS.X(), RPS.Y(),RPS.Heading());
+    SD.FPrintf(fptr1, "Expected D Position: %f %f %f\n", D_x,D_y,D_heading);
+    SD.FPrintf(fptr1, "Actual D Position:   %f %f %f\n\n", RPS.X(), RPS.Y(),RPS.Heading());
     
     // Close file pointer
-    SD.FClose(fptr);
+    SD.FClose(fptr1);
 
     return 0;
 }
