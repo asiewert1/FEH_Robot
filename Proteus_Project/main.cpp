@@ -20,10 +20,10 @@
 /* Defines for how long each pulse should be and at what motor power. 
 These value will normally be small, but you should play around with the values to find what works best */
 #define PULSE_TIME 0.25
-#define PULSE_POWER 20.0
+#define PULSE_POWER 15
 
 // Define for the motor power while driving (not pulsing)
-#define POWER 20.0
+#define POWER 25
 
 #define HEADING_TOLERANCE 2
 
@@ -248,32 +248,18 @@ void check_heading(float heading)
         LCD.WriteLine("Robot at correct heading");
     }
 
-    if(RPS.Heading()>340 || RPS.Heading()<20)
+    if(RPS.Heading> -1 && (RPS.Heading()<heading-HEADING_TOLERANCE || RPS.Heading()>heading + HEADING_TOLERANCE))
     {
-        while (RPS.Heading() > 340)
+        if(RPS.Heading() < heading - HEADING_TOLERANCE)
         {
             LCD.WriteLine("pulsing left");
-            pulse_counterclockwise(PULSE_POWER-5,PULSE_TIME);
+            pulse_counterclockwise(PULSE_POWER,PULSE_TIME);
         }
-
-        while (RPS.Heading() < 10)
+        else if (RPS.Heading()< heading + HEADING_TOLERANCE)
         {
             LCD.WriteLine("pulsing right");
-            pulse_counterclockwise(-PULSE_POWER-5,PULSE_TIME);
+            pulse_counterclockwise(-PULSE_POWER,PULSE_TIME);
         }
-    }
-    // If the robot is more than two (HEADING_TOLERANCE) to the right
-    while (RPS.Heading() - heading < -HEADING_TOLERANCE)
-    {
-        LCD.WriteLine("pulsing left");
-        pulse_counterclockwise(PULSE_POWER,PULSE_TIME);
-    }
-
-    // If more than two (HEADING TOLERANCE) to the left
-    while (RPS.Heading() - heading > HEADING_TOLERANCE)
-    {
-        LCD.WriteLine("pulsing right");
-        pulse_counterclockwise(-PULSE_POWER,PULSE_TIME);
     }
 
     // You will need to fill out this one yourself and take into account
@@ -308,7 +294,7 @@ int main(void)
 
     // COMPLETE CODE HERE TO READ SD CARD FOR LOGGED X AND Y DATA POINTS
     FEHFile *fptr = SD.FOpen("RPS_POIs.txt", "r");
-    SD.FScanf(fptr, "%f%f", &A_x, &A_y);
+    SD.FScanf(fptr, "%f%f",&A_x, &A_y);
     SD.FScanf(fptr, "%f%f",&B_x, &B_y);
     SD.FScanf(fptr, "%f%f",&C_x, &C_y);
     SD.FScanf(fptr, "%f%f",&D_x, &D_y);
