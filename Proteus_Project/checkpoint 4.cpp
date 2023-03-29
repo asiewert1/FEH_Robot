@@ -207,7 +207,7 @@ int main(){
 
     moveForward(300,percent);
 
-    turnLeft(250,percent);
+    turnLeft(255,percent);
 
     //run into wall
     moveBackward(230,percent);
@@ -217,10 +217,10 @@ int main(){
     //facing boarding pass
     turnRight(250,percent);
 
-    moveForward(300,percent);
+    moveForward(320,percent);
 
     //now facing passport
-    turnRight(250,percent);
+    turnRight(255,percent);
 
     Sleep(3000);
 
@@ -257,7 +257,7 @@ int main(){
     Sleep(2000);
 
     //perpendicular to passport ?
-    turnLeft(250,percent);
+    turnLeft(180,percent);
 
     Sleep(2000);
 
