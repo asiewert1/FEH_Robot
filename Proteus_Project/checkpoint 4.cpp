@@ -190,12 +190,82 @@ int main(){
 
     LCD.WriteLine("Light Seen");
 
+    //is adjusting to be facing ramp
+    LCD.WriteLine("Turning to face Ramp");
+    turnOnlyRight(415,tpercent);
+    moveForward(80,percent);
+    turnOnlyLeft(135,tpercent);
+
     LCD.WriteLine("Moving Foward to Ramp");
 
-    //move to ramp, 
-    moveForward(550,percent);
+     //move to ramp, 
+    moveForward(330,percent);
 
     LCD.WriteLine("Moving Up Ramp");
     //move up ramp, 12'
     moveForward(600,upRampPercent);
+
+    moveForward(300,percent);
+
+    turnLeft(250,percent);
+
+    //run into wall
+    moveBackward(230,percent);
+
+    moveForward(650,percent);
+
+    //facing boarding pass
+    turnRight(250,percent);
+
+    moveForward(300,percent);
+
+    //now facing passport
+    turnRight(250,percent);
+
+    Sleep(3000);
+
+    servo.SetPercent(-25);
+
+    while(micro_front.Value()){
+    }
+    servo.Stop();
+
+    //at passport
+    moveForward(50,percent);
+
+    Sleep(3000);
+
+    servo.SetPercent(40);
+    Sleep(3200);
+    servo.Stop();
+
+    //turn after arm goes up
+    turnLeft(75,-15);
+
+    moveForward(40,percent);
+
+    Sleep(1000);
+
+    moveBackward(50,percent);
+
+    turnRight(200,-15);
+
+    Sleep(2000);
+
+    moveBackward(250,percent);
+
+    Sleep(2000);
+
+    //perpendicular to passport ?
+    turnLeft(250,percent);
+
+    Sleep(2000);
+
+    moveForward(220,percent);
+
+    Sleep(2000);
+
+    //return passport to down position
+    turnRight(100,percent);
+
 }
