@@ -205,19 +205,19 @@ int main(){
     //move up ramp, 12'
     moveForward(600,upRampPercent);
 
-    moveForward(300,percent);
+    moveForward(310,percent);
 
-    turnLeft(255,percent);
+    turnLeft(260,percent);
 
     //run into wall
-    moveBackward(230,percent);
+    moveBackward(300,percent);
 
-    moveForward(650,percent);
+    moveForward(665,percent);
 
     //facing boarding pass
     turnRight(250,percent);
 
-    moveForward(320,percent);
+    moveForward(330,percent);
 
     //now facing passport
     turnRight(255,percent);
@@ -242,7 +242,7 @@ int main(){
     //turn after arm goes up
     turnLeft(75,-15);
 
-    moveForward(40,percent);
+    moveForward(65,percent);
 
     Sleep(1000);
 
@@ -257,11 +257,11 @@ int main(){
     Sleep(2000);
 
     //perpendicular to passport ?
-    turnLeft(180,percent);
+    turnLeft(175,percent);
 
     Sleep(2000);
 
-    moveForward(220,percent);
+    moveForward(255,percent);
 
     Sleep(2000);
 
