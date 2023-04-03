@@ -205,36 +205,42 @@ int main(){
     //move up ramp, 12'
     moveForward(600,upRampPercent);
 
-    moveForward(310,percent);
+    moveForward(360,percent);
 
-    turnLeft(260,percent);
+    turnLeft(290,percent);
 
     //run into wall
     LCD.WriteLine("Running into Wall");
     moveBackward(300,percent);
 
-    moveForward(600,percent);
+    moveForward(500,percent);
 
-    turnLeft(225,percent);
+    turnLeft(270,percent);
 
     moveForward(40,percent);
 
     //depositing luggage
-    servo.setPercent(-25);
+    servo.SetPercent(-25);
 
-    Sleep(3000);
-
+    while(micro_front.Value()){
+    }
+    servo.SetPercent(40);
+    Sleep(1000);
     servo.Stop();
 
     //starting to return to starting position
     moveBackward(50,percent);
 
-    turnLeft(225,percent);
+    turnRight(260,percent);
 
-    moveForward(500,percent);
+    moveBackward(600,percent);
 
-    turnRight(225,percent);
+    moveForward(100,percent);
 
-    //going down the ramp
-    moveForward(600,percent);
+    turnLeft(260,percent);
+
+    while(true){
+        left_motor.SetPercent(percent);
+        right_motor.SetPercent(percent);
+    }
 }
