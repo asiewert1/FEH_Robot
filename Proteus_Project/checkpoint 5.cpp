@@ -219,9 +219,22 @@ int main(){
 
     moveForward(40,percent);
 
+    //depositing luggage
     servo.setPercent(-25);
 
     Sleep(3000);
 
     servo.Stop();
+
+    //starting to return to starting position
+    moveBackward(50,percent);
+
+    turnLeft(225,percent);
+
+    moveForward(500,percent);
+
+    turnRight(225,percent);
+
+    //going down the ramp
+    moveForward(600,percent);
 }
