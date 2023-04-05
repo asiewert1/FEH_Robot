@@ -12,6 +12,11 @@
 #define X_Light 12.3
 #define Y_Light 64.9
 
+/* Direction along axis which robot is traveling
+Examples:
+	- if robot is traveling to the upper level, that is a PLUS as the y-coordinate is increasing
+	- if robot is traveling to the lower level, that is a MINUS as the y-coordinate is decreasing
+*/
 #define PLUS 0
 #define MINUS 1
 
@@ -310,13 +315,13 @@ int main(){
 
     turnRight(260,percent);
 
-    check_x(X_Light,PLUS);
+    check_x(X_Light,MINUS);
 
     turnLeft(260,percent);
 
     moveBackward(300,percent);
 
-    check_y(Y_Light,percent);
+    check_y(Y_Light,PLUS);
 
     LCD.WriteLine("Getting Light Value");
     //get value of light
