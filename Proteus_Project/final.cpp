@@ -9,8 +9,12 @@
 #define PULSE_POWER 20
 #define PULSE_TIME 0.25
 
-#define X_Light 
-#define Y_Light 
+#define X_Light 12.3
+#define Y_Light 64.9
+
+#define PLUS 0
+#define MINUS 1
+
 
 //Declarations for encoders & motors
 AnalogInputPin CdS_cell (FEHIO::P1_0);
@@ -306,13 +310,13 @@ int main(){
 
     turnRight(260,percent);
 
-    check_x();
+    check_x(X_Light,PLUS);
 
     turnLeft(260,percent);
 
     moveBackward(300,percent);
 
-    check_y();
+    check_y(Y_Light,percent);
 
     LCD.WriteLine("Getting Light Value");
     //get value of light
