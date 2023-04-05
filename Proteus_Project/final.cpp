@@ -43,6 +43,9 @@ void turnOnlyLeft(int tcount, int tpercent);
 void turnOnlyRight(int tcount, int tpercent);
 void zero();
 void boardingPass(bool red);
+void pulse_forward(int percent, float seconds);
+void check_x(float y_coordinate, int orientation);
+void check_y(float y_coordinate, int orientation);
 
 void moveForward(int counts, int percent){
     //Reset encoder counts
@@ -76,6 +79,23 @@ void moveBackward(int counts, int percent){
 
     //turn motors off
     zero();
+}
+
+/*
+* Pulse forward a short distance using time
+*/
+void pulse_forward(int percent, float seconds)
+{
+    // Set both motors to desired percent
+    right_motor.SetPercent(percent);
+    left_motor.SetPercent(percent);
+
+    // Wait for the correct number of seconds
+    Sleep(seconds);
+
+    // Turn off motors
+    right_motor.Stop();
+    left_motor.Stop();
 }
 
 /*
