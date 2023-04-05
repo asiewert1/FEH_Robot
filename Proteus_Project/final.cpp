@@ -4,6 +4,14 @@
 #include <FEHMotor.h>
 #include <FEHRPS.h>
 
+#define RPS_WAIT_TIME_IN_SEC 0.35
+
+#define PULSE_POWER 20
+#define PULSE_TIME 0.25
+
+#define X_Light 
+#define Y_Light 
+
 //Declarations for encoders & motors
 AnalogInputPin CdS_cell (FEHIO::P1_0);
 DigitalEncoder right_encoder(FEHIO::P0_0);
@@ -59,6 +67,66 @@ void moveBackward(int counts, int percent){
 
     //turn motors off
     zero();
+}
+
+/*
+* Use RPS to move to the desired x_coordinate based on the orientation of the QR code
+*/
+void check_x(float x_coordinate, int orientation)
+{
+    // Determine the direction of the motors based on the orientation of the QR code
+    int power = PULSE_POWER;
+    if (orientation == MINUS)
+    {
+        power = -PULSE_POWER;
+    }
+
+    // Check if receiving proper RPS coordinates and whether the robot is within an acceptable range
+    while (RPS.X() > -1 && (RPS.X() < x_coordinate - 1 || RPS.X() > x_coordinate + 1))
+    {
+        LCD.WriteLine(RPS.X());
+        if (RPS.X() < x_coordinate - 1)
+        {
+            // Pulse the motors for a short duration in the correct direction
+            pulse_forward(power, PULSE_TIME);
+        }
+        else if (RPS.X() > x_coordinate+1)
+        {
+            // Pulse the motors for a short duration in the correct direction
+            pulse_forward(-power, PULSE_TIME);
+        }
+        Sleep(RPS_WAIT_TIME_IN_SEC);
+    }
+}
+
+/*
+* Use RPS to move to the desired y_coordinate based on the orientation of the QR code
+*/
+void check_y(float y_coordinate, int orientation)
+{
+    // Determine the direction of the motors based on the orientation of the QR code
+    int power = PULSE_POWER;
+    if (orientation == MINUS)
+    {
+        power = -PULSE_POWER;
+    }
+
+    // Check if receiving proper RPS coordinates and whether the robot is within an acceptable range
+    while (RPS.Y() > -1 && (RPS.Y() < y_coordinate - 1 || RPS.Y() > y_coordinate + 1))
+    {   
+        LCD.WriteLine(RPS.Y());
+        if (RPS.Y() < y_coordinate - 1)
+        {
+            // Pulse the motors for a short duration in the correct direction
+            pulse_forward(power, PULSE_TIME);
+        }
+        else if (RPS.Y() > y_coordinate+1)
+        {
+            // Pulse the motors for a short duration in the correct direction
+            pulse_forward(-power, PULSE_TIME);
+        }
+        Sleep(RPS_WAIT_TIME_IN_SEC);
+    }
 }
 
 void turnOnlyRight(int tcount, int tpercent){
@@ -190,6 +258,9 @@ int main(){
 
     LCD.WriteLine("Light Seen");
 
+    /*
+    * LUGGAGE
+    */
     //is adjusting to be facing ramp
     LCD.WriteLine("Turning to face Ramp");
     turnOnlyRight(415,tpercent);
@@ -228,19 +299,108 @@ int main(){
     Sleep(1000);
     servo.Stop();
 
-    //starting to return to starting position
+    /*
+    * BOARDING PASS
+    */
     moveBackward(50,percent);
 
     turnRight(260,percent);
 
-    moveBackward(600,percent);
-
-    moveForward(100,percent);
+    check_x();
 
     turnLeft(260,percent);
 
-    while(true){
-        left_motor.SetPercent(percent);
-        right_motor.SetPercent(percent);
+    moveBackward(300,percent);
+
+    check_y();
+
+    LCD.WriteLine("Getting Light Value");
+    //get value of light
+    float val= CdS_cell.Value();
+
+    if(val<.5){
+        //red
+        LCD.WriteLine("Red");
     }
+    else{
+        LCD.WriteLine("Blue");
+    }
+
+    //move back enough to run into wall
+    moveBackward(200,percent+5);
+
+    turnRight(225,percent);
+
+    LCD.WriteLine("Aligning with wall");
+    //run into wall to align
+    moveBackward(500,percent);
+
+    if(val<.5){
+        //red
+        LCD.WriteLine("Moving Towards Red Button");
+        moveForward(400,percent);
+    }
+    else
+    {   //blue
+        LCD.WriteLine("Moving Towards Blue Button");
+        moveForward(200,percent);
+    }
+
+    //back is facing kiosk
+    turnRight(225,percent);
+
+    LCD.WriteLine("Backing into button");
+    //move backward into the wall to hit the button
+    left_motor.SetPercent(25);
+    right_motor.SetPercent(25);
+    Sleep(6000);
+
+    zero();
+
+    /*
+    * PASSPORT
+    */
+
+    moveForward(300,percent);
+
+    turnLeft(250,percent);
+
+    //ram into left wall to align
+    moveBackward(400,percent);
+
+    //now at passport arm
+    moveForward(700,percent);
+
+    //put servo in down position
+    servo.SetPercent(-25);
+
+    while(micro_front.Value()){
+    }
+    servo.Stop();
+
+    //at passport
+    moveForward(50,percent);
+
+    servo.SetPercent(40);
+    Sleep(3200);
+    servo.Stop();
+
+    //turn after arm goes up
+    turnLeft(75,-15);
+
+    moveForward(65,percent);
+
+    moveBackward(50,percent);
+
+    turnRight(200,-15);
+
+    moveBackward(250,percent);
+
+    //perpendicular to passport ?
+    turnLeft(175,percent);
+
+    moveForward(255,percent);
+
+    //return passport to down position
+    turnRight(100,percent);
 }
