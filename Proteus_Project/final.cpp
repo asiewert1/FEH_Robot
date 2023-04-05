@@ -6,7 +6,7 @@
 
 #define RPS_WAIT_TIME_IN_SEC 0.35
 
-#define PULSE_POWER 20
+#define PULSE_POWER -20
 #define PULSE_TIME 0.25
 
 #define X_Light 12.3
@@ -44,7 +44,7 @@ void turnOnlyRight(int tcount, int tpercent);
 void zero();
 void boardingPass(bool red);
 void pulse_forward(int percent, float seconds);
-void check_x(float y_coordinate, int orientation);
+void check_x(float x_coordinate, int orientation);
 void check_y(float y_coordinate, int orientation);
 
 void moveForward(int counts, int percent){
@@ -111,15 +111,15 @@ void check_x(float x_coordinate, int orientation)
     }
 
     // Check if receiving proper RPS coordinates and whether the robot is within an acceptable range
-    while (RPS.X() > -1 && (RPS.X() < x_coordinate - 1 || RPS.X() > x_coordinate + 1))
+    while (RPS.X() > -1 && (RPS.X() < x_coordinate - .5 || RPS.X() > x_coordinate + .5))
     {
         LCD.WriteLine(RPS.X());
-        if (RPS.X() < x_coordinate - 1)
+        if (RPS.X() < x_coordinate - .5)
         {
             // Pulse the motors for a short duration in the correct direction
             pulse_forward(power, PULSE_TIME);
         }
-        else if (RPS.X() > x_coordinate+1)
+        else if (RPS.X() > x_coordinate+.5)
         {
             // Pulse the motors for a short duration in the correct direction
             pulse_forward(-power, PULSE_TIME);
@@ -141,15 +141,15 @@ void check_y(float y_coordinate, int orientation)
     }
 
     // Check if receiving proper RPS coordinates and whether the robot is within an acceptable range
-    while (RPS.Y() > -1 && (RPS.Y() < y_coordinate - 1 || RPS.Y() > y_coordinate + 1))
+    while (RPS.Y() > -1 && (RPS.Y() < y_coordinate - .5 || RPS.Y() > y_coordinate + .5))
     {   
         LCD.WriteLine(RPS.Y());
-        if (RPS.Y() < y_coordinate - 1)
+        if (RPS.Y() < y_coordinate - .5)
         {
             // Pulse the motors for a short duration in the correct direction
             pulse_forward(power, PULSE_TIME);
         }
-        else if (RPS.Y() > y_coordinate+1)
+        else if (RPS.Y() > y_coordinate+.5)
         {
             // Pulse the motors for a short duration in the correct direction
             pulse_forward(-power, PULSE_TIME);
@@ -305,7 +305,7 @@ int main(){
     //move up ramp, 12'
     moveForward(600,upRampPercent);
 
-    moveForward(360,percent);
+    moveForward(310,percent);
 
     turnLeft(290,percent);
 
@@ -324,8 +324,6 @@ int main(){
 
     while(micro_front.Value()){
     }
-    servo.SetPercent(40);
-    Sleep(1000);
     servo.Stop();
 
     /*
@@ -333,7 +331,7 @@ int main(){
     */
     moveBackward(50,percent);
 
-    turnRight(260,percent);
+    turnRight(265,percent);
 
     check_x(X_Light,MINUS);
 
@@ -341,7 +339,7 @@ int main(){
 
     moveBackward(300,percent);
 
-    check_y(Y_Light,PLUS);
+    check_y(Y_Light,MINUS);
 
     LCD.WriteLine("Getting Light Value");
     //get value of light
@@ -356,9 +354,9 @@ int main(){
     }
 
     //move back enough to run into wall
-    moveBackward(200,percent+5);
+    moveForward(200,percent);
 
-    turnRight(225,percent);
+    turnLeft(225,percent);
 
     LCD.WriteLine("Aligning with wall");
     //run into wall to align
