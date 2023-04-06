@@ -430,4 +430,109 @@ int main(){
 
     //return passport to down position
     turnRight(100,percent);
+
+    /*
+    * MOVE TO FUEL LEVER
+    */
+
+    turnLeft(50,percet);
+
+    moveBackward(200,percent);
+
+    turnRight(250,percent);
+
+    moveForward(200,percent);
+
+    //now facing passport
+    turnLeft(250,percent);
+
+    //back into wall for alignment
+    moveBackward(300,percent);
+
+    moveForward(50,percent);
+
+    //facing down ramp
+    turnRight(250,percent);
+
+    //go down ramp
+    moveForward(300,percent);
+
+    /*
+    * FUEL LEVER
+    */
+
+    int correctLever= RPS.GetCorrectLever();
+
+    LCD.WriteLine(correctLever);
+
+    //get drawbridge in correct positon
+    setServoStart();
+
+    Sleep(1000);
+
+    //position robot at correct lever
+    if(correctLever==0){
+        //left, A
+        turnLeft(250,percent);
+        moveForward(50,percent);
+        Sleep(1000);
+        turnRight(250,tpercent);
+        moveBackward(60,percent);
+        
+
+    }
+    else if(correctLever==1){
+        //middle, A1
+        moveForward(175,percent);
+        Sleep(1000);
+        turnRight(250,tpercent);
+        moveBackward(20,percent);
+    }
+    else{
+        //right, B
+        moveForward(100,percent);
+        Sleep(1000);
+        moveBackward(50,percent);
+    }
+
+    //stop at lever
+    zero();
+
+    Sleep(1000);    
+
+    LCD.WriteLine("Flipping Lever");
+    servo.SetPercent(-25);
+    Sleep(6000);
+    servo.Stop();
+
+    Sleep(1000);
+
+    moveBackward(100,percent);
+    zero();
+
+    Sleep(1000);
+
+    LCD.WriteLine("Waiting 5 Seconds");
+
+    //moves to down position
+    servo.SetPercent(-25);
+    while(micro_front.Value()){}
+    servo.Stop();
+
+    Sleep(5000);
+    
+    moveForward(100,percent);
+    zero();
+
+    Sleep(1000);
+
+    //lifts lever up
+    servo.SetPercent(30);
+    Sleep(2100);
+
+    servo.Stop();
+    zero();
+
+    moveBackward(100,percent);
+   
 }
