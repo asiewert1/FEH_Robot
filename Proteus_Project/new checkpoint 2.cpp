@@ -320,7 +320,6 @@ int main(){
         LCD.WriteLine("Blue");
     }
 
-    //move back enough to run into wall
     moveBackward(200,percent+5);
 
     turnRight(225,percent);
