@@ -9,8 +9,8 @@
 #define PULSE_POWER -20
 #define PULSE_TIME 0.25
 
-#define X_Light 12.3
-#define Y_Light 64.9
+#define X_Light 11.3
+#define Y_Light 59.2
 
 /* Direction along axis which robot is traveling
 Examples:
@@ -306,7 +306,7 @@ int main(){
     //move up ramp, 12'
     moveForward(600,upRampPercent);
 
-    moveForward(310,percent);
+    moveForward(330,percent);
 
     turnLeft(290,percent);
 
@@ -337,11 +337,11 @@ int main(){
 
     check_x(X_Light,MINUS);
 
-    turnLeft(260,percent);
+    turnRight(250,percent);
 
-    moveBackward(300,percent);
+    moveForward(300,percent);
 
-    check_y(Y_Light,MINUS);
+    check_y(Y_Light,PLUS);
 
     LCD.WriteLine("Getting Light Value");
     //get value of light
@@ -355,10 +355,11 @@ int main(){
         LCD.WriteLine("Blue");
     }
 
-    moveForward(200,percent);
+    moveBackward(200,percent+5);
 
-    turnLeft(230,percent);
+    turnRight(225,percent);
 
+    LCD.WriteLine("Aligning with wall");
     //run into wall to align
     moveBackward(500,percent);
 
@@ -441,7 +442,7 @@ int main(){
     * MOVE TO FUEL LEVER
     */
 
-    turnLeft(50,percet);
+    turnLeft(50,percent);
 
     moveBackward(200,percent);
 
