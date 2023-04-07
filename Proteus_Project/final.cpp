@@ -290,6 +290,7 @@ int main(){
     /*
     * LUGGAGE
     */
+
     //is adjusting to be facing ramp
     LCD.WriteLine("Turning to face Ramp");
     turnOnlyRight(415,tpercent);
@@ -329,6 +330,7 @@ int main(){
     /*
     * BOARDING PASS
     */
+
     moveBackward(50,percent);
 
     turnRight(265,percent);
@@ -353,12 +355,10 @@ int main(){
         LCD.WriteLine("Blue");
     }
 
-    //move back enough to run into wall
     moveForward(200,percent);
 
-    turnLeft(225,percent);
+    turnLeft(230,percent);
 
-    LCD.WriteLine("Aligning with wall");
     //run into wall to align
     moveBackward(500,percent);
 
@@ -392,8 +392,14 @@ int main(){
 
     turnLeft(250,percent);
 
-    //ram into left wall to align
-    moveBackward(400,percent);
+    if(val<.5){
+        //red
+        moveBackward(400,percent);
+    }
+    else
+    {   //blue
+        moveBackward(200,percent);
+    }
 
     //now at passport arm
     moveForward(700,percent);
@@ -474,16 +480,14 @@ int main(){
     if(correctLever==0){
         //left, A
         turnLeft(250,percent);
-        moveForward(50,percent);
+        moveForward(175,percent);
         Sleep(1000);
         turnRight(250,tpercent);
         moveBackward(60,percent);
-        
-
     }
     else if(correctLever==1){
         //middle, A1
-        moveForward(175,percent);
+        moveForward(150,percent);
         Sleep(1000);
         turnRight(250,tpercent);
         moveBackward(20,percent);
@@ -492,7 +496,6 @@ int main(){
         //right, B
         moveForward(100,percent);
         Sleep(1000);
-        moveBackward(50,percent);
     }
 
     //stop at lever
