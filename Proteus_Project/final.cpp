@@ -9,7 +9,7 @@
 #define PULSE_POWER -20
 #define PULSE_TIME 0.25
 
-#define X_Light 11.3
+#define X_Light 12.0
 #define Y_Light 59.2
 
 /* Direction along axis which robot is traveling
@@ -299,7 +299,7 @@ int main(){
 
     LCD.WriteLine("Moving Foward to Ramp");
 
-     //move to ramp, 
+    //move to ramp, 
     moveForward(330,percent);
 
     LCD.WriteLine("Moving Up Ramp");
@@ -312,7 +312,7 @@ int main(){
 
     //run into wall
     LCD.WriteLine("Running into Wall");
-    moveBackward(300,percent);
+    moveBackward(200,percent);
 
     moveForward(500,percent);
 
@@ -337,6 +337,8 @@ int main(){
 
     check_x(X_Light,MINUS);
 
+    checkHeading();
+
     turnRight(250,percent);
 
     moveForward(300,percent);
@@ -355,27 +357,27 @@ int main(){
         LCD.WriteLine("Blue");
     }
 
-    moveBackward(200,percent+5);
+    moveBackward(300,percent);
 
-    turnRight(225,percent);
+    turnRight(260,percent);
 
     LCD.WriteLine("Aligning with wall");
     //run into wall to align
-    moveBackward(500,percent);
+    moveBackward(450,percent+5);
 
     if(val<.5){
         //red
         LCD.WriteLine("Moving Towards Red Button");
-        moveForward(400,percent);
+        moveForward(600,percent);
     }
     else
     {   //blue
         LCD.WriteLine("Moving Towards Blue Button");
-        moveForward(200,percent);
+        moveForward(400,percent);
     }
 
     //back is facing kiosk
-    turnRight(225,percent);
+    turnRight(250,percent);
 
     LCD.WriteLine("Backing into button");
     //move backward into the wall to hit the button
@@ -393,6 +395,7 @@ int main(){
 
     turnLeft(250,percent);
 
+    //run into left wall
     if(val<.5){
         //red
         moveBackward(400,percent);
