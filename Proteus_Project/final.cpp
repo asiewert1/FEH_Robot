@@ -7,10 +7,12 @@
 #define RPS_WAIT_TIME_IN_SEC 0.35
 
 #define PULSE_POWER -20
-#define PULSE_TIME 0.25
+#define PULSE_TIME 0.15
 
-#define X_Light 12.0
+#define X_Light 12.2
 #define Y_Light 59.2
+
+#define HEADING_TOLERANCE 2.0
 
 /* Direction along axis which robot is traveling
 Examples:
@@ -156,6 +158,24 @@ void check_y(float y_coordinate, int orientation)
         }
         Sleep(RPS_WAIT_TIME_IN_SEC);
     }
+}
+/*
+* Pulse counterclockwise a short distance using time
+*/
+void pulse_counterclockwise(int percent, float seconds)
+{
+    // Set both motors to desired percent
+    right_motor.SetPercent(percent);
+    left_motor.SetPercent(-percent);
+
+    // Wait for the correct number of seconds
+    Sleep(seconds);
+
+    // Turn off motors
+    right_motor.Stop();
+    left_motor.Stop();
+
+    Sleep(seconds);
 }
 
 void check_heading(float heading)
@@ -355,7 +375,9 @@ int main(){
 
     //run into wall
     LCD.WriteLine("Running into Wall");
-    moveBackward(200,percent);
+    left_motor.SetPercent(25);
+    right_motor.SetPercent(25);
+    Sleep(3000);
 
     moveForward(500,percent);
 
@@ -378,17 +400,15 @@ int main(){
 
     turnRight(265,percent);
 
+    moveForward(150,percent);
+
     check_x(X_Light,MINUS);
 
     turnRight(250,percent);
 
-    check_heading(180);
-
-    moveForward(300,percent);
+    moveForward(340,percent);
 
     check_y(Y_Light,PLUS);
-
-    check_heading(180);
 
     LCD.WriteLine("Getting Light Value");
     //get value of light
@@ -402,39 +422,33 @@ int main(){
         LCD.WriteLine("Blue");
     }
 
-    moveBackward(300,percent);
+    moveBackward(360,percent);
 
     turnRight(260,percent);
 
     LCD.WriteLine("Aligning with wall");
     //run into wall to align
-    moveBackward(450,percent+5);
+    moveBackward(450,percent-10);
 
     if(val<.5){
         //red
         LCD.WriteLine("Moving Towards Red Button");
-        moveForward(600,percent);
-        LCD.WriteLine(right_encoder.Counts());
-        LCD.WriteLine(left_encoder.Counts());
-        Sleep(3000);
+        moveForward(860,percent);
     }
     else
     {   //blue
         LCD.WriteLine("Moving Towards Blue Button");
-        moveForward(400,percent);
-        LCD.WriteLine(right_encoder.Counts());
-        LCD.WriteLine(left_encoder.Counts());
-        Sleep(3000);
+        moveForward(650,percent);
     }
 
     //back is facing kiosk
-    turnRight(250,percent);
+    turnRight(260,percent);
 
     LCD.WriteLine("Backing into button");
     //move backward into the wall to hit the button
     left_motor.SetPercent(25);
     right_motor.SetPercent(25);
-    Sleep(6000);
+    Sleep(5000);
 
     zero();
 
@@ -442,32 +456,19 @@ int main(){
     * PASSPORT
     */
 
-    moveForward(300,percent);
+    moveForward(350,percent);
 
     turnLeft(250,percent);
 
-    //run into left wall
+    //get to passport arm
     if(val<.5){
         //red
-        moveBackward(400,percent);
+        moveBackward(50,percent);
     }
     else
     {   //blue
-        moveBackward(200,percent);
+        moveForward(200,percent);
     }
-
-    //now at passport arm
-    moveForward(700,percent);
-
-    //put servo in down position
-    servo.SetPercent(-25);
-
-    while(micro_front.Value()){
-    }
-    servo.Stop();
-
-    //at passport
-    moveForward(50,percent);
 
     servo.SetPercent(40);
     Sleep(3200);
@@ -485,8 +486,9 @@ int main(){
     moveBackward(250,percent);
 
     //perpendicular to passport ?
-    turnLeft(175,percent);
 
+    // The move forward here will have to be different for red and blue (Alex)
+    turnLeft(175,percent);
     moveForward(255,percent);
 
     //return passport to down position
