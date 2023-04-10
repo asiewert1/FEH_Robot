@@ -193,13 +193,6 @@ void check_heading(float heading)
         }
         
     }
-    
-
-    // You will need to fill out this one yourself and take into account
-    // checking for proper RPS data and the edge conditions
-    //(when you want the robot to go to 0 degrees or close to 0 degrees)
-    
-
     /*
         SUGGESTED ALGORITHM:
         1. Check the current orientation of the QR code and the desired orientation of the QR code
@@ -387,13 +380,15 @@ int main(){
 
     check_x(X_Light,MINUS);
 
-    checkHeading();
-
     turnRight(250,percent);
+
+    check_heading(180);
 
     moveForward(300,percent);
 
     check_y(Y_Light,PLUS);
+
+    check_heading(180);
 
     LCD.WriteLine("Getting Light Value");
     //get value of light
@@ -419,11 +414,17 @@ int main(){
         //red
         LCD.WriteLine("Moving Towards Red Button");
         moveForward(600,percent);
+        LCD.WriteLine(right_encoder.Counts());
+        LCD.WriteLine(left_encoder.Counts());
+        Sleep(3000);
     }
     else
     {   //blue
         LCD.WriteLine("Moving Towards Blue Button");
         moveForward(400,percent);
+        LCD.WriteLine(right_encoder.Counts());
+        LCD.WriteLine(left_encoder.Counts());
+        Sleep(3000);
     }
 
     //back is facing kiosk
