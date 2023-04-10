@@ -158,6 +158,56 @@ void check_y(float y_coordinate, int orientation)
     }
 }
 
+void check_heading(float heading)
+{
+    // If the robot is at the desired heading(
+    if ((RPS.Heading() - heading > -HEADING_TOLERANCE) && (RPS.Heading() - heading < HEADING_TOLERANCE))
+    {
+        LCD.WriteLine("Robot at correct heading");
+    }
+    
+    while(RPS.Heading() - heading < -HEADING_TOLERANCE||RPS.Heading() - heading > HEADING_TOLERANCE){
+        
+        if(RPS.Heading()>355)
+        {
+            LCD.WriteLine("Done");
+            break;
+        }
+
+        // If the robot is more than two (HEADING_TOLERANCE) to the right
+        if(RPS.Heading() - heading < -HEADING_TOLERANCE)
+        {
+            LCD.WriteLine("pulsing left");
+            pulse_counterclockwise(PULSE_POWER,PULSE_TIME/2);
+        
+        }
+
+        // If more than two (HEADING TOLERANCE) to the left
+        else if(RPS.Heading() - heading > HEADING_TOLERANCE)
+        {
+            LCD.WriteLine("pulsing right");
+            pulse_counterclockwise(-PULSE_POWER,PULSE_TIME/2);
+        }
+        else{
+            LCD.WriteLine("correct");
+        }
+        
+    }
+    
+
+    // You will need to fill out this one yourself and take into account
+    // checking for proper RPS data and the edge conditions
+    //(when you want the robot to go to 0 degrees or close to 0 degrees)
+    
+
+    /*
+        SUGGESTED ALGORITHM:
+        1. Check the current orientation of the QR code and the desired orientation of the QR code
+        2. Check if the robot is within the desired threshold for the heading based on the orientation
+        3. Pulse in the correct direction based on the orientation
+    */
+}
+
 void turnOnlyRight(int tcount, int tpercent){
     // reset encoder counts
     right_encoder.ResetCounts();
