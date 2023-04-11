@@ -12,7 +12,7 @@
 #define X_Light 12.0
 #define Y_Light 59.2
 
-#define X_Passport 18.3
+#define X_Passport 18.2
 #define X_Finish 12.4
 
 #define HEADING_TOLERANCE 1.0
@@ -378,9 +378,9 @@ int main(){
 
     //run into wall
     LCD.WriteLine("Running into Wall");
-    left_motor.SetPercent(25);
-    right_motor.SetPercent(25);
-    Sleep(2000);
+    left_motor.SetPercent(40);
+    right_motor.SetPercent(40);
+    Sleep(1500);
     zero();
 
     moveForward(500,percent);
@@ -452,9 +452,9 @@ int main(){
 
     LCD.WriteLine("Backing into button");
     //move backward into the wall to hit the button
-    left_motor.SetPercent(25);
-    right_motor.SetPercent(25);
-    Sleep(5000);
+    left_motor.SetPercent(40);
+    right_motor.SetPercent(40);
+    Sleep(4000);
 
     zero();
 
@@ -466,16 +466,16 @@ int main(){
     //get to passport arm
     if(val<.5){
         //red
-        moveForward(370,percent);
-        turnOnlyRight(310,-percent);
+        moveForward(450,percent);
+        turnOnlyRight(520,-percent);
         moveBackward(100,percent);
         check_x(X_Passport,PLUS);
     }
     else
     {   //blue
-        moveForward(350,percent);
+        moveForward(330,percent);
         turnLeft(270,percent);
-        moveForward(100,percent);
+        moveForward(80,percent);
         check_x(X_Passport,PLUS);
     }
 
@@ -495,8 +495,7 @@ int main(){
 
     moveBackward(250,percent);
 
-    //perpendicular to passport ?
-    turnLeft(175,percent);
+    turnLeft(165,percent);
     moveForward(255,percent);
 
     //return passport to down position
@@ -522,7 +521,7 @@ int main(){
     //back into wall for alignment
     moveBackward(600,percent-10);
 
-    moveForward(60,percent);
+    moveForward(75,percent);
 
     turnRight(260,percent);
 
@@ -541,9 +540,9 @@ int main(){
 
     //get drawbridge in correct positon
     LCD.WriteLine("Putting drawbridge in correct position");
-    setServoStart();
-
+    servo.SetPercent(-50);
     Sleep(1000);
+    servo.Stop();
 
     //position robot at correct lever
     LCD.WriteLine("Moving to correct fuel lever");
@@ -564,31 +563,24 @@ int main(){
     }
     else{
         //right, B
-        moveForward(100,percent);
-        Sleep(1000);
+        moveForward(130,percent);
     }
 
     //stop at lever
-    zero();
-
-    Sleep(1000);    
+    zero();  
 
     LCD.WriteLine("Flipping Lever");
-    servo.SetPercent(-25);
-    Sleep(6000);
-    servo.Stop();
-
+    servo.SetPercent(-50);
     Sleep(1000);
+    servo.Stop();
 
     moveBackward(100,percent);
     zero();
 
-    Sleep(1000);
-
     LCD.WriteLine("Waiting 5 Seconds");
 
     //moves to down position
-    servo.SetPercent(-25);
+    servo.SetPercent(-50);
     while(micro_front.Value()){}
     servo.Stop();
 
@@ -596,8 +588,6 @@ int main(){
     
     moveForward(100,percent);
     zero();
-
-    Sleep(1000);
 
     //lifts lever up
     LCD.WriteLine("lifting lever up");
@@ -608,5 +598,31 @@ int main(){
     zero();
 
     moveBackward(100,percent);
+
+    turnLeft(260,percent);
+
+    if(correctLever==0){
+        //left, A
+    }
+    else if(correctLever==1){
+        //middle, A1
+        moveForward(200,percent);
+    }
+    else{
+        //right, B
+        moveForward(300,percent);
+    }
+
+    LCD.WriteLine("Getting to common position");
+    check_x(X_Finish,PLUS);
+
+    turnRight(125,percent);
+
+    servo.SetPercent(-25);
+    Sleep(1000);
+
+    servo.Stop();
    
+   LCD.WriteLine("Running into final button");
+    moveForward(800,percent-10);
 }
