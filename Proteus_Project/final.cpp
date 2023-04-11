@@ -9,10 +9,13 @@
 #define PULSE_POWER -20
 #define PULSE_TIME 0.15
 
-#define X_Light 12.2
+#define X_Light 12.0
 #define Y_Light 59.2
 
-#define HEADING_TOLERANCE 2.0
+#define X_Passport 18.3
+#define X_Finish 12.4
+
+#define HEADING_TOLERANCE 1.0
 
 /* Direction along axis which robot is traveling
 Examples:
@@ -89,7 +92,7 @@ void moveBackward(int counts, int percent){
 void pulse_forward(int percent, float seconds)
 {
     // Set both motors to desired percent
-    right_motor.SetPercent(percent);
+    right_motor.SetPercent(percent-4);
     left_motor.SetPercent(percent);
 
     // Wait for the correct number of seconds
@@ -175,7 +178,7 @@ void pulse_counterclockwise(int percent, float seconds)
     right_motor.Stop();
     left_motor.Stop();
 
-    Sleep(seconds);
+    Sleep(RPS_WAIT_TIME_IN_SEC);
 }
 
 void check_heading(float heading)
@@ -377,7 +380,8 @@ int main(){
     LCD.WriteLine("Running into Wall");
     left_motor.SetPercent(25);
     right_motor.SetPercent(25);
-    Sleep(3000);
+    Sleep(2000);
+    zero();
 
     moveForward(500,percent);
 
@@ -400,11 +404,13 @@ int main(){
 
     turnRight(265,percent);
 
-    moveForward(150,percent);
+    moveForward(160,percent);
 
     check_x(X_Light,MINUS);
 
-    turnRight(250,percent);
+    turnRight(260,percent);
+
+    check_heading(270);
 
     moveForward(340,percent);
 
@@ -424,16 +430,16 @@ int main(){
 
     moveBackward(360,percent);
 
-    turnRight(260,percent);
+    turnRight(270,percent);
 
     LCD.WriteLine("Aligning with wall");
     //run into wall to align
-    moveBackward(450,percent-10);
+    moveBackward(500,percent-10);
 
     if(val<.5){
         //red
         LCD.WriteLine("Moving Towards Red Button");
-        moveForward(860,percent);
+        moveForward(830,percent);
     }
     else
     {   //blue
@@ -454,22 +460,26 @@ int main(){
 
     /*
     * PASSPORT
-    */
+    */ 
 
-    moveForward(350,percent);
-
-    turnLeft(250,percent);
-
+    LCD.WriteLine("Moving to Passport Arm");
     //get to passport arm
     if(val<.5){
         //red
-        moveBackward(50,percent);
+        moveForward(370,percent);
+        turnOnlyRight(310,-percent);
+        moveBackward(100,percent);
+        check_x(X_Passport,PLUS);
     }
     else
     {   //blue
-        moveForward(200,percent);
+        moveForward(350,percent);
+        turnLeft(270,percent);
+        moveForward(100,percent);
+        check_x(X_Passport,PLUS);
     }
 
+    LCD.WriteLine("Flipping passport");
     servo.SetPercent(40);
     Sleep(3200);
     servo.Stop();
@@ -486,54 +496,57 @@ int main(){
     moveBackward(250,percent);
 
     //perpendicular to passport ?
-
-    // The move forward here will have to be different for red and blue (Alex)
     turnLeft(175,percent);
     moveForward(255,percent);
 
     //return passport to down position
+    LCD.WriteLine("Returning Passport to down position");
     turnRight(100,percent);
 
     /*
     * MOVE TO FUEL LEVER
     */
 
-    turnLeft(50,percent);
+    LCD.WriteLine("Moving to Fuel Levers");
+    turnLeft(60,percent);
 
-    moveBackward(200,percent);
+    moveBackward(200,percent-10);
 
-    turnRight(250,percent);
+    //facing fuel levers
+    turnRight(260,percent);
 
-    moveForward(200,percent);
+    moveForward(300,percent);
 
-    //now facing passport
-    turnLeft(250,percent);
+    turnLeft(260,percent);
 
     //back into wall for alignment
-    moveBackward(300,percent);
+    moveBackward(600,percent-10);
 
-    moveForward(50,percent);
+    moveForward(60,percent);
 
-    //facing down ramp
-    turnRight(250,percent);
+    turnRight(260,percent);
 
     //go down ramp
-    moveForward(300,percent);
+    LCD.WriteLine("Going down ramp");
+    moveForward(900,percent);
 
     /*
     * FUEL LEVER
     */
 
+    LCD.WriteLine("Getting correct lever:");
     int correctLever= RPS.GetCorrectLever();
 
     LCD.WriteLine(correctLever);
 
     //get drawbridge in correct positon
+    LCD.WriteLine("Putting drawbridge in correct position");
     setServoStart();
 
     Sleep(1000);
 
     //position robot at correct lever
+    LCD.WriteLine("Moving to correct fuel lever");
     if(correctLever==0){
         //left, A
         turnLeft(250,percent);
@@ -587,6 +600,7 @@ int main(){
     Sleep(1000);
 
     //lifts lever up
+    LCD.WriteLine("lifting lever up");
     servo.SetPercent(30);
     Sleep(2100);
 
