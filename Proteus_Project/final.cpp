@@ -54,6 +54,7 @@ void boardingPass(bool red);
 void pulse_forward(int percent, float seconds);
 void check_x(float x_coordinate, int orientation);
 void check_y(float y_coordinate, int orientation);
+void print(FEHFile* fptr);
 
 void moveForward(int counts, int percent){
     //Reset encoder counts
@@ -322,6 +323,10 @@ void setServoStart(){
     servo.Stop();
 }
 
+void print(FEHFile* fptr){
+    SD.FPrintf(fptr, "%f%f", RPS.X(), RPS.Y());
+}
+
 int main(){
 
     RPS.InitializeTouchMenu();
@@ -347,9 +352,12 @@ int main(){
 
     LCD.Clear(BLACK);
 
+    FEHFile *fptr = SD.FOpen("Coordinates.txt", "w");
+
     //wait for light to turn on
 
     LCD.WriteLine("Waiting for Light");
+    print(fptr);
 
     
     while(CdS_cell.Value()>2){}
@@ -364,18 +372,22 @@ int main(){
     LCD.WriteLine("Turning to face Ramp");
     turnOnlyRight(415,tpercent);
     moveForward(80,percent);
+    print(fptr);
     turnOnlyLeft(135,tpercent);
 
     LCD.WriteLine("Moving Foward to Ramp");
 
     //move to ramp, 
     moveForward(330,percent);
+    print(fptr);
 
     LCD.WriteLine("Moving Up Ramp");
     //move up ramp, 12'
     moveForward(600,upRampPercent);
+    print(fptr);
 
     moveForward(330,percent);
+    print(fptr);
 
     turnLeft(290,percent);
 
@@ -385,12 +397,15 @@ int main(){
     right_motor.SetPercent(40);
     Sleep(1500);
     zero();
+    print(fptr);
 
     moveForward(500,percent);
+    print(fptr);
 
     turnLeft(270,percent);
 
     moveForward(40,percent);
+    print(fptr);
 
     //depositing luggage
     servo.SetPercent(-25);
@@ -404,20 +419,26 @@ int main(){
     */
 
     moveBackward(50,percent);
+    print(fptr);
 
     turnRight(265,percent);
 
     moveForward(160,percent);
+    print(fptr);
 
     check_x(X_Light,MINUS);
+    print(fptr);
 
     turnRight(260,percent);
+    print(fptr);
 
     check_heading(270);
 
     moveForward(340,percent);
+    print(fptr);
 
     check_y(Y_Light,PLUS);
+    print(fptr);
 
     LCD.WriteLine("Getting Light Value");
     //get value of light
@@ -432,12 +453,14 @@ int main(){
     }
 
     moveBackward(360,percent);
+    print(fptr);
 
     turnRight(270,percent);
 
     LCD.WriteLine("Aligning with wall");
     //run into wall to align
     moveBackward(500,percent-10);
+    print(fptr);
 
     if(val<BP_LIGHT){
         //red
@@ -449,6 +472,7 @@ int main(){
         LCD.WriteLine("Moving Towards Blue Button");
         moveForward(650,percent);
     }
+    print(fptr);
 
     //back is facing kiosk
     turnRight(260,percent);
@@ -460,6 +484,7 @@ int main(){
     Sleep(4000);
 
     zero();
+    print(fptr);
 
     /*
     * PASSPORT
@@ -470,16 +495,22 @@ int main(){
     if(val<BP_LIGHT){
         //red
         moveForward(500,percent);
+        print(fptr);
         turnOnlyRight(520,-percent);
         moveBackward(100,percent);
+        print(fptr);
         check_x(X_Passport,PLUS);
+        print(fptr);
     }
     else
     {   //blue
         moveForward(330,percent);
+        print(fptr);
         turnLeft(270,percent);
         moveForward(80,percent);
+        print(fptr);
         check_x(X_Passport,PLUS);
+        print(fptr);
     }
 
     LCD.WriteLine("Flipping passport");
@@ -491,15 +522,20 @@ int main(){
     turnLeft(75,-15);
 
     moveForward(65,percent);
+    print(fptr);
 
     moveBackward(50,percent);
+    print(fptr);
 
     turnRight(200,-15);
 
     moveBackward(250,percent);
+    print(fptr);
 
     turnLeft(155,percent);
+
     moveForward(255,percent);
+    print(fptr);
 
     //return passport to down position
     LCD.WriteLine("Returning Passport to down position");
@@ -513,24 +549,29 @@ int main(){
     turnLeft(60,percent);
 
     moveBackward(200,percent-10);
+    print(fptr);
 
     //facing fuel levers
     turnRight(260,percent);
 
     moveForward(300,percent);
+    print(fptr);
 
     turnLeft(260,percent);
 
     //back into wall for alignment
     moveBackward(600,percent-10);
+    print(fptr);
 
     moveForward(75,percent);
+    print(fptr);
 
     turnRight(260,percent);
 
     //go down ramp
     LCD.WriteLine("Going down ramp");
     moveForward(900,percent);
+    print(fptr);
 
     /*
     * FUEL LEVER
@@ -552,20 +593,26 @@ int main(){
     if(correctLever==0){
         //left, A
         turnLeft(260,percent);
+        print(fptr);
         moveForward(200,percent);
+        print(fptr);
         turnRight(250,tpercent);
         moveBackward(130,percent);
+        print(fptr);
     }
     else if(correctLever==1){
         //middle, A1
         turnLeft(260,percent);
         moveForward(150,percent);
+        print(fptr);
         turnRight(250,tpercent);
         moveBackward(130,percent);
+        print(fptr);
     }
     else{
         //right, B
         moveForward(135,percent);
+        print(fptr);
     }
 
     //stop at lever
@@ -578,6 +625,7 @@ int main(){
 
     moveBackward(100,percent);
     zero();
+    print(fptr);
 
     LCD.WriteLine("Waiting 5 Seconds");
 
@@ -589,7 +637,7 @@ int main(){
     Sleep(5000);
     
     moveForward(100,percent);
-    zero();
+    print(fptr);
 
     //lifts lever up
     LCD.WriteLine("Lifting lever up");
@@ -600,6 +648,7 @@ int main(){
     zero();
 
     moveBackward(100,percent);
+    print(fptr);
 
     turnLeft(260,percent);
 
@@ -609,14 +658,17 @@ int main(){
     else if(correctLever==1){
         //middle, A1
         moveForward(200,percent);
+        print(fptr);
     }
     else{
         //right, B
         moveForward(300,percent);
+        print(fptr);
     }
 
     LCD.WriteLine("Getting to common position");
     check_x(X_Finish,PLUS);
+    print(fptr);
 
     turnRight(125,percent);
 
@@ -625,6 +677,7 @@ int main(){
 
     servo.Stop();
    
-   LCD.WriteLine("Running into final button");
+    LCD.WriteLine("Running into final button");
     moveForward(800,percent-10);
+    print(fptr);
 }
