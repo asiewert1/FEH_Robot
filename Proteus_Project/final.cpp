@@ -11,15 +11,15 @@
 #define PULSE_TIME 0.15
 
 #define X_Light 12.0
-#define Y_Light 59.2
+#define Y_Light 59.6
 
-#define X_Passport 18.4
+#define X_Passport 18.3
 #define X_Finish 12.4
 
 #define HEADING_TOLERANCE 1.0
 
-#define BP_LIGHT .5
-#define StartLight
+#define BP_LIGHT .53
+#define StartLight 2.0
 
 /* Direction along axis which robot is traveling
 Examples:
@@ -188,13 +188,14 @@ void pulse_counterclockwise(int percent, float seconds)
 
 void check_heading(float heading)
 {
+    int count=0;
     // If the robot is at the desired heading(
     if ((RPS.Heading() - heading > -HEADING_TOLERANCE) && (RPS.Heading() - heading < HEADING_TOLERANCE))
     {
         LCD.WriteLine("Robot at correct heading");
     }
     
-    while(RPS.Heading() - heading < -HEADING_TOLERANCE||RPS.Heading() - heading > HEADING_TOLERANCE){
+    while((RPS.Heading() - heading < -HEADING_TOLERANCE||RPS.Heading() - heading > HEADING_TOLERANCE)&& count<7){
         
         if(RPS.Heading()>355)
         {
@@ -207,6 +208,7 @@ void check_heading(float heading)
         {
             LCD.WriteLine("pulsing left");
             pulse_counterclockwise(PULSE_POWER,PULSE_TIME/2);
+            count++;
         
         }
 
@@ -215,9 +217,10 @@ void check_heading(float heading)
         {
             LCD.WriteLine("pulsing right");
             pulse_counterclockwise(-PULSE_POWER,PULSE_TIME/2);
+            count++;
         }
         else{
-            LCD.WriteLine("correct");
+            LCD.WriteLine("correct heading");
         }
         
     }
@@ -361,7 +364,7 @@ int main(){
     printFile(fptr);
 
     
-    while(CdS_cell.Value()>2){}
+    while(CdS_cell.Value()>StartLight){}
 
     LCD.WriteLine("Light Seen");
 
@@ -447,10 +450,14 @@ int main(){
 
     if(val<BP_LIGHT){
         //red
-        LCD.WriteLine("Red");
+        LCD.Clear(RED);
+        Sleep(500);
+        LCD.Clear();
     }
     else{
-        LCD.WriteLine("Blue");
+        LCD.Clear(BLUE);
+        Sleep(500);
+        LCD.Clear();
     }
 
     moveBackward(360,percent);
@@ -466,7 +473,7 @@ int main(){
     if(val<BP_LIGHT){
         //red
         LCD.WriteLine("Moving Towards Red Button");
-        moveForward(830,percent);
+        moveForward(860,percent);
     }
     else
     {   //blue
@@ -492,24 +499,30 @@ int main(){
     */ 
 
     LCD.WriteLine("Moving to Passport Arm");
+    moveForward(40,percent);
+    check_heading(90);
+
     //get to passport arm
     if(val<BP_LIGHT){
         //red
-        moveForward(570,percent);
+        moveForward(490,percent);
         printFile(fptr);
+
         turnOnlyRight(520,-percent);
-        moveBackward(50,percent);
-        printFile(fptr);
+
         check_x(X_Passport,PLUS);
         printFile(fptr);
     }
     else
     {   //blue
-        moveForward(400,percent);
+        moveForward(355,percent);
         printFile(fptr);
+
         turnLeft(270,percent);
+
         moveForward(80,percent);
         printFile(fptr);
+
         check_x(X_Passport,PLUS);
         printFile(fptr);
     }
@@ -520,7 +533,7 @@ int main(){
     servo.Stop();
 
     //turn after arm goes up
-    turnLeft(75,-15);
+    turnLeft(80,-15);
 
     moveForward(65,percent);
     printFile(fptr);
@@ -553,11 +566,11 @@ int main(){
     printFile(fptr);
 
     //facing fuel levers
-    turnRight(260,percent);
+    turnRight(270,percent);
     check_heading(90);
-    check_y(50,PLUS);
 
     moveForward(300,percent);
+    check_y(50,MINUS);
     printFile(fptr);
 
     turnLeft(260,percent);
@@ -566,15 +579,17 @@ int main(){
     moveBackward(600,percent-10);
     printFile(fptr);
 
-    moveForward(100,percent);
+    moveForward(110,percent);
     printFile(fptr);
 
     turnRight(260,percent);
 
     //go down ramp
     LCD.WriteLine("Going down ramp");
-    moveForward(950,percent);
+    moveForward(1000,percent);
     printFile(fptr);
+
+    check_y(15,MINUS);
 
     /*
     * FUEL LEVER
@@ -595,36 +610,40 @@ int main(){
     LCD.WriteLine("Moving to correct fuel lever");
     if(correctLever==0){
         //left, A
-        turnLeft(260,percent);
+        turnLeft(270,percent);
         printFile(fptr);
-        moveForward(200,percent);
+
+        moveForward(235,percent);
         printFile(fptr);
-        turnRight(250,tpercent);
-        moveBackward(130,percent);
+
+        turnRight(260,tpercent);
         printFile(fptr);
     }
     else if(correctLever==1){
         //middle, A1
         turnLeft(260,percent);
+        
         moveForward(150,percent);
         printFile(fptr);
-        turnRight(250,tpercent);
-        moveBackward(130,percent);
+
+        turnRight(260,tpercent);
         printFile(fptr);
     }
     else{
         //right, B
-        moveForward(135,percent);
+        //moveForward(50,percent);
         printFile(fptr);
     }
 
     //stop at lever
     zero();  
+    moveForward(30,percent);
 
     LCD.WriteLine("Flipping Lever");
     servo.SetPercent(-50);
     Sleep(1000);
     servo.Stop();
+    Sleep(500);
 
     moveBackward(100,percent);
     zero();
@@ -676,13 +695,37 @@ int main(){
     turnRight(125,percent);
 
     servo.SetPercent(-25);
-    Sleep(1000);
+    Sleep(500);
 
     servo.Stop();
    
     LCD.WriteLine("Running into final button");
-    moveForward(800,percent-10);
+    right_motor.SetPercent(-30);
+    left_motor.SetPercent(-30);
     printFile(fptr);
 
+    Sleep(500);
+    printFile(fptr);
+
+    Sleep(500);
+    printFile(fptr);
+
+    Sleep(500);
+    printFile(fptr);
+
+    Sleep(500);
+    printFile(fptr);
+
+    Sleep(500);
+    printFile(fptr);
+
+    Sleep(500);
+    printFile(fptr);
+
+    Sleep(500);
+    printFile(fptr);
+
+    Sleep(500);
+    printFile(fptr);
 
 }
