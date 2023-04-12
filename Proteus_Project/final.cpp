@@ -12,10 +12,13 @@
 #define X_Light 12.0
 #define Y_Light 59.2
 
-#define X_Passport 18.2
+#define X_Passport 18.3
 #define X_Finish 12.4
 
 #define HEADING_TOLERANCE 1.0
+
+#define BP_LIGHT .5
+#define StartLight
 
 /* Direction along axis which robot is traveling
 Examples:
@@ -420,7 +423,7 @@ int main(){
     //get value of light
     float val= CdS_cell.Value();
 
-    if(val<.5){
+    if(val<BP_LIGHT){
         //red
         LCD.WriteLine("Red");
     }
@@ -436,7 +439,7 @@ int main(){
     //run into wall to align
     moveBackward(500,percent-10);
 
-    if(val<.5){
+    if(val<BP_LIGHT){
         //red
         LCD.WriteLine("Moving Towards Red Button");
         moveForward(830,percent);
@@ -464,9 +467,9 @@ int main(){
 
     LCD.WriteLine("Moving to Passport Arm");
     //get to passport arm
-    if(val<.5){
+    if(val<BP_LIGHT){
         //red
-        moveForward(450,percent);
+        moveForward(500,percent);
         turnOnlyRight(520,-percent);
         moveBackward(100,percent);
         check_x(X_Passport,PLUS);
@@ -495,7 +498,7 @@ int main(){
 
     moveBackward(250,percent);
 
-    turnLeft(165,percent);
+    turnLeft(155,percent);
     moveForward(255,percent);
 
     //return passport to down position
@@ -548,22 +551,21 @@ int main(){
     LCD.WriteLine("Moving to correct fuel lever");
     if(correctLever==0){
         //left, A
-        turnLeft(250,percent);
-        moveForward(175,percent);
-        Sleep(1000);
+        turnLeft(260,percent);
+        moveForward(200,percent);
         turnRight(250,tpercent);
-        moveBackward(60,percent);
+        moveBackward(130,percent);
     }
     else if(correctLever==1){
         //middle, A1
+        turnLeft(260,percent);
         moveForward(150,percent);
-        Sleep(1000);
         turnRight(250,tpercent);
-        moveBackward(20,percent);
+        moveBackward(130,percent);
     }
     else{
         //right, B
-        moveForward(130,percent);
+        moveForward(135,percent);
     }
 
     //stop at lever
@@ -590,7 +592,7 @@ int main(){
     zero();
 
     //lifts lever up
-    LCD.WriteLine("lifting lever up");
+    LCD.WriteLine("Lifting lever up");
     servo.SetPercent(30);
     Sleep(2100);
 
