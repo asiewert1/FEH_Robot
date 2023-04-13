@@ -11,12 +11,12 @@
 #define PULSE_TIME 0.15
 
 #define X_Light 12.0
-#define Y_Light 59.6
+#define Y_Light 59.9
 
-#define X_Passport 18.3
+#define X_Passport 18.7
 #define X_Finish 12.4
 
-#define HEADING_TOLERANCE 1.0
+#define HEADING_TOLERANCE .8
 
 #define BP_LIGHT .53
 #define StartLight 2.0
@@ -508,14 +508,13 @@ int main(){
         moveForward(490,percent);
         printFile(fptr);
 
-        turnOnlyRight(520,-percent);
+        turnOnlyRight(525,-percent);
 
-        check_x(X_Passport,PLUS);
-        printFile(fptr);
+        moveBackward(50,percent);
     }
     else
     {   //blue
-        moveForward(355,percent);
+        moveForward(335,percent);
         printFile(fptr);
 
         turnLeft(270,percent);
@@ -523,22 +522,23 @@ int main(){
         moveForward(80,percent);
         printFile(fptr);
 
-        check_x(X_Passport,PLUS);
-        printFile(fptr);
     }
+
+    check_x(X_Passport,PLUS);
+    printFile(fptr);
 
     LCD.WriteLine("Flipping passport");
     servo.SetPercent(40);
-    Sleep(3200);
+    Sleep(3050);
     servo.Stop();
 
     //turn after arm goes up
     turnLeft(80,-15);
 
-    moveForward(65,percent);
+    moveForward(80,percent);
     printFile(fptr);
 
-    moveBackward(50,percent);
+    moveBackward(60,percent);
     printFile(fptr);
 
     turnRight(200,-15);
@@ -579,17 +579,18 @@ int main(){
     moveBackward(600,percent-10);
     printFile(fptr);
 
-    moveForward(110,percent);
+    moveForward(120,percent);
     printFile(fptr);
 
     turnRight(260,percent);
 
     //go down ramp
     LCD.WriteLine("Going down ramp");
-    moveForward(1000,percent);
+    moveForward(920,percent);
     printFile(fptr);
 
-    check_y(15,MINUS);
+    check_y(23,MINUS);
+    printFile(fptr);
 
     /*
     * FUEL LEVER
@@ -603,7 +604,7 @@ int main(){
     //get drawbridge in correct positon
     LCD.WriteLine("Putting drawbridge in correct position");
     servo.SetPercent(-50);
-    Sleep(1000);
+    Sleep(900);
     servo.Stop();
 
     //position robot at correct lever
@@ -616,28 +617,27 @@ int main(){
         moveForward(235,percent);
         printFile(fptr);
 
-        turnRight(260,tpercent);
+        turnRight(265,tpercent);
         printFile(fptr);
     }
     else if(correctLever==1){
         //middle, A1
         turnLeft(260,percent);
         
-        moveForward(150,percent);
+        moveForward(135,percent);
         printFile(fptr);
 
-        turnRight(260,tpercent);
+        turnRight(265,tpercent);
         printFile(fptr);
     }
     else{
         //right, B
-        //moveForward(50,percent);
         printFile(fptr);
     }
 
     //stop at lever
-    zero();  
-    moveForward(30,percent);
+    zero(); 
+    //moveForward(40,percent);
 
     LCD.WriteLine("Flipping Lever");
     servo.SetPercent(-50);
@@ -669,7 +669,7 @@ int main(){
     servo.Stop();
     zero();
 
-    moveBackward(100,percent);
+    moveBackward(95,percent);
     printFile(fptr);
 
     turnLeft(260,percent);
@@ -694,9 +694,12 @@ int main(){
 
     turnRight(125,percent);
 
-    servo.SetPercent(-25);
-    Sleep(500);
+    // servo.SetPercent(-25);
+    // Sleep(500);
+    // servo.Stop();
 
+    servo.SetPercent(-50);
+    while(micro_front.Value()){}
     servo.Stop();
    
     LCD.WriteLine("Running into final button");
