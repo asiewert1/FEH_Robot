@@ -11,7 +11,7 @@
 #define PULSE_TIME 0.15
 
 #define X_Light 12.0
-#define Y_Light 59.9
+#define Y_Light 59.8
 
 #define X_Passport 18.7
 #define X_Finish 12.4
@@ -97,7 +97,7 @@ void moveBackward(int counts, int percent){
 void pulse_forward(int percent, float seconds)
 {
     // Set both motors to desired percent
-    right_motor.SetPercent(percent-3);
+    right_motor.SetPercent(percent-2);
     left_motor.SetPercent(percent);
 
     // Wait for the correct number of seconds
@@ -532,6 +532,9 @@ int main(){
     Sleep(3050);
     servo.Stop();
 
+    //move forward a tad
+    pulse_forward(PULSE_POWER,PULSE_TIME);
+
     //turn after arm goes up
     turnLeft(80,-15);
 
@@ -546,7 +549,7 @@ int main(){
     moveBackward(250,percent);
     printFile(fptr);
 
-    turnLeft(155,percent);
+    turnLeft(150,percent);
 
     moveForward(255,percent);
     printFile(fptr);
@@ -588,7 +591,7 @@ int main(){
     LCD.WriteLine("Going down ramp");
     moveForward(920,percent);
     printFile(fptr);
-
+ 
     check_y(23,MINUS);
     printFile(fptr);
 
