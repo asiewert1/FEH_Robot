@@ -10,9 +10,6 @@
 #define PULSE_POWER -20
 #define PULSE_TIME 0.15
 
-#define X_Light 12.0
-#define Y_Light 59.8
-
 #define X_Passport 18.7
 #define X_Finish 12.4
 
@@ -56,6 +53,29 @@ void pulse_forward(int percent, float seconds);
 void check_x(float x_coordinate, int orientation);
 void check_y(float y_coordinate, int orientation);
 void printFile(FEHFile *fptr);
+void setPoint();
+
+void setPoint(){
+
+    // Write point letter
+    LCD.WriteRC("Touch to set point ", 9, 0);
+
+    // Wait for touchscreen to be pressed and display RPS data
+    while (!LCD.Touch(&touch_x, &touch_y))
+    {
+        LCD.WriteRC(RPS.X(), 11, 12);       // update the x coordinate
+        LCD.WriteRC(RPS.Y(), 12, 12);       // update the y coordinate
+        LCD.WriteRC(RPS.Heading(), 13, 12); // update the heading
+
+        Sleep(100); // wait for 100ms to avoid updating the screen too quickly
+    }
+    while (LCD.Touch(&touch_x, &touch_y));
+    LCD.ClearBuffer();
+
+    // Print RPS data for this path point to file
+    X_Light= RPS.X();
+    Y_Light= RPS.Y();
+}
 
 void moveForward(int counts, int percent){
     //Reset encoder counts
@@ -334,6 +354,7 @@ void printFile(FEHFile *fptr){
 int main(){
 
     RPS.InitializeTouchMenu();
+    setPoint();
     setServoStart();
 
     float x, y; //for touch screen
@@ -549,7 +570,7 @@ int main(){
     moveBackward(250,percent);
     printFile(fptr);
 
-    turnLeft(150,percent);
+    turnLeft(130,percent);
 
     moveForward(255,percent);
     printFile(fptr);
