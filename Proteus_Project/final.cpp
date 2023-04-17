@@ -26,6 +26,8 @@ Examples:
 #define PLUS 0
 #define MINUS 1
 
+float X_Light, Y_Light;
+
 
 //Declarations for encoders & motors
 AnalogInputPin CdS_cell (FEHIO::P1_0);
@@ -57,11 +59,13 @@ void setPoint();
 
 void setPoint(){
 
+    float x,y;
+    
     // Write point letter
     LCD.WriteRC("Touch to set point ", 9, 0);
 
     // Wait for touchscreen to be pressed and display RPS data
-    while (!LCD.Touch(&touch_x, &touch_y))
+    while (!LCD.Touch(&x, &y))
     {
         LCD.WriteRC(RPS.X(), 11, 12);       // update the x coordinate
         LCD.WriteRC(RPS.Y(), 12, 12);       // update the y coordinate
@@ -69,7 +73,7 @@ void setPoint(){
 
         Sleep(100); // wait for 100ms to avoid updating the screen too quickly
     }
-    while (LCD.Touch(&touch_x, &touch_y));
+    while (LCD.Touch(&x, &y));
     LCD.ClearBuffer();
 
     // Print RPS data for this path point to file
@@ -117,7 +121,7 @@ void moveBackward(int counts, int percent){
 void pulse_forward(int percent, float seconds)
 {
     // Set both motors to desired percent
-    right_motor.SetPercent(percent-2);
+    right_motor.SetPercent(percent);
     left_motor.SetPercent(percent);
 
     // Wait for the correct number of seconds
@@ -535,7 +539,7 @@ int main(){
     }
     else
     {   //blue
-        moveForward(335,percent);
+        moveForward(325,percent);
         printFile(fptr);
 
         turnLeft(270,percent);
@@ -628,7 +632,7 @@ int main(){
     //get drawbridge in correct positon
     LCD.WriteLine("Putting drawbridge in correct position");
     servo.SetPercent(-50);
-    Sleep(900);
+    Sleep(800);
     servo.Stop();
 
     //position robot at correct lever
@@ -665,7 +669,7 @@ int main(){
 
     LCD.WriteLine("Flipping Lever");
     servo.SetPercent(-50);
-    Sleep(1000);
+    Sleep(700);
     servo.Stop();
     Sleep(500);
 
