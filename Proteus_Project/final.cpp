@@ -219,7 +219,7 @@ void check_heading(float heading)
         LCD.WriteLine("Robot at correct heading");
     }
     
-    while((RPS.Heading() - heading < -HEADING_TOLERANCE||RPS.Heading() - heading > HEADING_TOLERANCE)&& count<7){
+    while((RPS.Heading() - heading < -HEADING_TOLERANCE||RPS.Heading() - heading > HEADING_TOLERANCE)&& count<5){
         
         if(RPS.Heading()>355)
         {
@@ -437,7 +437,7 @@ int main(){
     printFile(fptr);
 
     //depositing luggage
-    servo.SetPercent(-25);
+    servo.SetPercent(-40);
 
     while(micro_front.Value()){
     }
@@ -461,10 +461,12 @@ int main(){
     turnRight(260,percent);
     printFile(fptr);
 
-    check_heading(270);
+    check_heading(267);
 
     moveForward(340,percent);
     printFile(fptr);
+
+    check_heading(267);
 
     check_y(Y_Light,PLUS);
     printFile(fptr);
@@ -607,7 +609,7 @@ int main(){
     moveBackward(600,percent-10);
     printFile(fptr);
 
-    moveForward(120,percent);
+    moveForward(125,percent);
     printFile(fptr);
 
     turnRight(260,percent);
@@ -632,7 +634,7 @@ int main(){
     //get drawbridge in correct positon
     LCD.WriteLine("Putting drawbridge in correct position");
     servo.SetPercent(-50);
-    Sleep(800);
+    Sleep(780);
     servo.Stop();
 
     //position robot at correct lever
@@ -669,7 +671,7 @@ int main(){
 
     LCD.WriteLine("Flipping Lever");
     servo.SetPercent(-50);
-    Sleep(700);
+    Sleep(850);
     servo.Stop();
     Sleep(500);
 
