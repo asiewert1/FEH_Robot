@@ -26,7 +26,7 @@ Examples:
 #define PLUS 0
 #define MINUS 1
 
-float X_Light, Y_Light;
+float X_Light, Y_Light, X_PP;
 
 
 //Declarations for encoders & motors
@@ -62,7 +62,7 @@ void setPoint(){
     float x,y;
     
     // Write point letter
-    LCD.WriteRC("Touch to set point ", 9, 0);
+    LCD.WriteRC("Set Boarding Pass Light ", 9, 0);
 
     // Wait for touchscreen to be pressed and display RPS data
     while (!LCD.Touch(&x, &y))
@@ -79,6 +79,26 @@ void setPoint(){
     // Print RPS data for this path point to file
     X_Light= RPS.X();
     Y_Light= RPS.Y();
+
+    LCD.Clear(BLACK);
+
+    // Write point letter
+    LCD.WriteRC("Set Passport X: ", 15, 0);
+
+    // Wait for touchscreen to be pressed and display RPS data
+    while (!LCD.Touch(&x, &y))
+    {
+        LCD.WriteRC(RPS.X(), 11, 12);       // update the x coordinate
+        LCD.WriteRC(RPS.Y(), 12, 12);       // update the y coordinate
+        LCD.WriteRC(RPS.Heading(), 13, 12); // update the heading
+
+        Sleep(100); // wait for 100ms to avoid updating the screen too quickly
+    }
+    while (LCD.Touch(&x, &y));
+    LCD.ClearBuffer();
+
+    // Print RPS data for this path point to file
+    X_PP= RPS.X();
 }
 
 void moveForward(int counts, int percent){
@@ -357,6 +377,11 @@ void printFile(FEHFile *fptr){
 
 int main(){
 
+    servo.SetPercent(-25);
+    while(micro_front.Value()){
+    }
+    servo.Stop();
+
     RPS.InitializeTouchMenu();
     setPoint();
     setServoStart();
@@ -487,20 +512,23 @@ int main(){
         LCD.Clear();
     }
 
-    moveBackward(360,percent);
+    moveBackward(385,percent);
     printFile(fptr);
 
     turnRight(270,percent);
 
     LCD.WriteLine("Aligning with wall");
     //run into wall to align
-    moveBackward(500,percent-10);
+    left_motor.SetPercent(40);
+    right_motor.SetPercent(40);
+    Sleep(2000);
+    zero();
     printFile(fptr);
 
     if(val<BP_LIGHT){
         //red
         LCD.WriteLine("Moving Towards Red Button");
-        moveForward(860,percent);
+        moveForward(850,percent);
     }
     else
     {   //blue
@@ -510,7 +538,7 @@ int main(){
     printFile(fptr);
 
     //back is facing kiosk
-    turnRight(260,percent);
+    turnRight(270,percent);
 
     LCD.WriteLine("Backing into button");
     //move backward into the wall to hit the button
@@ -527,7 +555,7 @@ int main(){
 
     LCD.WriteLine("Moving to Passport Arm");
     moveForward(40,percent);
-    check_heading(90);
+    check_heading(88);
 
     //get to passport arm
     if(val<BP_LIGHT){
@@ -541,17 +569,17 @@ int main(){
     }
     else
     {   //blue
-        moveForward(325,percent);
+        moveForward(335,percent);
         printFile(fptr);
 
         turnLeft(270,percent);
 
-        moveForward(80,percent);
+        moveForward(50,percent);
         printFile(fptr);
 
     }
 
-    check_x(X_Passport,PLUS);
+    check_x(X_PP,PLUS);
     printFile(fptr);
 
     LCD.WriteLine("Flipping passport");
@@ -671,7 +699,7 @@ int main(){
 
     LCD.WriteLine("Flipping Lever");
     servo.SetPercent(-50);
-    Sleep(850);
+    Sleep(950);
     servo.Stop();
     Sleep(500);
 
@@ -699,7 +727,7 @@ int main(){
     servo.Stop();
     zero();
 
-    moveBackward(95,percent);
+    moveBackward(90,percent);
     printFile(fptr);
 
     turnLeft(260,percent);
@@ -722,19 +750,15 @@ int main(){
     check_x(X_Finish,PLUS);
     printFile(fptr);
 
-    turnRight(125,percent);
+    turnRight(130,percent);
 
-    // servo.SetPercent(-25);
-    // Sleep(500);
-    // servo.Stop();
-
-    servo.SetPercent(-50);
-    while(micro_front.Value()){}
+    servo.SetPercent(40);
+    Sleep(2800);
     servo.Stop();
    
     LCD.WriteLine("Running into final button");
-    right_motor.SetPercent(-30);
-    left_motor.SetPercent(-30);
+    right_motor.SetPercent(-50);
+    left_motor.SetPercent(-50);
     printFile(fptr);
 
     Sleep(500);
