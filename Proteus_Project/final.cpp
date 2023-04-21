@@ -384,6 +384,7 @@ int main(){
 
     RPS.InitializeTouchMenu();
     setPoint();
+    Sleep(2000);
     setServoStart();
 
     float x, y; //for touch screen
@@ -477,7 +478,7 @@ int main(){
 
     turnRight(265,percent);
 
-    moveForward(160,percent);
+    moveForward(240,percent);
     printFile(fptr);
 
     check_x(X_Light,MINUS);
@@ -528,7 +529,7 @@ int main(){
     if(val<BP_LIGHT){
         //red
         LCD.WriteLine("Moving Towards Red Button");
-        moveForward(850,percent);
+        moveForward(845,percent);
     }
     else
     {   //blue
@@ -544,7 +545,7 @@ int main(){
     //move backward into the wall to hit the button
     left_motor.SetPercent(35);
     right_motor.SetPercent(35);
-    Sleep(3000);
+    Sleep(2800);
 
     zero();
     printFile(fptr);
@@ -565,7 +566,7 @@ int main(){
 
         turnOnlyRight(525,-percent);
 
-        moveBackward(50,percent);
+        moveBackward(30,percent);
     }
     else
     {   //blue
@@ -593,7 +594,12 @@ int main(){
     //turn after arm goes up
     turnLeft(80,-15);
 
-    moveForward(80,percent);
+    left_motor.SetPercent(-25);
+    right_motor.SetPercent(-25);
+    Sleep(500);
+    zero();
+
+    //moveForward(80,percent);
     printFile(fptr);
 
     moveBackward(60,percent);
@@ -625,16 +631,20 @@ int main(){
 
     //facing fuel levers
     turnRight(270,percent);
-    check_heading(90);
+    //check_heading(90);
 
-    moveForward(300,percent);
-    check_y(50,MINUS);
+    moveForward(350,percent);
+    //check_y(50,MINUS);
     printFile(fptr);
 
     turnLeft(260,percent);
 
     //back into wall for alignment
-    moveBackward(600,percent-10);
+    left_motor.SetPercent(40);
+    right_motor.SetPercent(40);
+    Sleep(2500);
+    zero();
+    //moveBackward(600,percent-10);
     printFile(fptr);
 
     moveForward(125,percent);
@@ -644,11 +654,13 @@ int main(){
 
     //go down ramp
     LCD.WriteLine("Going down ramp");
-    moveForward(920,percent);
+    moveForward(950,percent);
     printFile(fptr);
  
     check_y(23,MINUS);
     printFile(fptr);
+
+    check_heading(90);
 
     /*
     * FUEL LEVER
@@ -669,7 +681,7 @@ int main(){
     LCD.WriteLine("Moving to correct fuel lever");
     if(correctLever==0){
         //left, A
-        turnLeft(270,percent);
+        turnLeft(265,percent);
         printFile(fptr);
 
         moveForward(235,percent);
@@ -699,7 +711,7 @@ int main(){
 
     LCD.WriteLine("Flipping Lever");
     servo.SetPercent(-50);
-    Sleep(950);
+    Sleep(1000);
     servo.Stop();
     Sleep(500);
 
