@@ -77,7 +77,7 @@ void setPoint(){
     LCD.ClearBuffer();
 
     // Print RPS data for this path point to file
-    X_Light= RPS.X()+.5;
+    X_Light= RPS.X();
     Y_Light= RPS.Y();
 
     LCD.Clear(BLACK);
