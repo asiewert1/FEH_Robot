@@ -77,7 +77,7 @@ void setPoint(){
     LCD.ClearBuffer();
 
     // Print RPS data for this path point to file
-    X_Light= RPS.X()+.7;
+    X_Light= RPS.X()+.5;
     Y_Light= RPS.Y();
 
     LCD.Clear(BLACK);
@@ -585,14 +585,21 @@ int main(){
 
     LCD.WriteLine("Flipping passport");
     servo.SetPercent(40);
-    Sleep(3050);
+    Sleep(2950);
     servo.Stop();
 
     //move forward a tad
     pulse_forward(PULSE_POWER,PULSE_TIME);
 
     //turn after arm goes up
-    turnLeft(80,-15);
+    //turnLeft(80,-15);
+    turnLeft(40,-15);
+    
+    servo.SetPercent(40);
+    Sleep(100);
+    servo.Stop();
+
+    turnLeft(40,-15);
 
     left_motor.SetPercent(-25);
     right_motor.SetPercent(-25);
