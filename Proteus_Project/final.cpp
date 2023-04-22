@@ -5,7 +5,7 @@
 #include <FEHRPS.h>
 #include <FEHSD.h>
 
-#define RPS_WAIT_TIME_IN_SEC 0.35
+#define RPS_WAIT_TIME_IN_SEC 0.6
 
 #define PULSE_POWER -20
 #define PULSE_TIME 0.15
@@ -594,7 +594,7 @@ int main(){
     //turn after arm goes up
     //turnLeft(80,-15);
     turnLeft(40,-15);
-    
+
     servo.SetPercent(40);
     Sleep(100);
     servo.Stop();
