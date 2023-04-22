@@ -15,8 +15,8 @@
 
 #define HEADING_TOLERANCE .8
 
-#define BP_LIGHT .53
-#define StartLight 2.0
+#define BP_LIGHT .55
+#define StartLight 1.5
 
 /* Direction along axis which robot is traveling
 Examples:
@@ -83,7 +83,7 @@ void setPoint(){
     LCD.Clear(BLACK);
 
     // Write point letter
-    LCD.WriteRC("Set Passport X: ", 15, 0);
+    LCD.WriteRC("Set Passport X: ", 9, 0);
 
     // Wait for touchscreen to be pressed and display RPS data
     while (!LCD.Touch(&x, &y))

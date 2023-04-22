@@ -20,10 +20,10 @@ DigitalInputPin micro_front(FEHIO::P1_1);
 int main(){
     while(true){
        LCD.Clear();
-       LCD.PrintLine(CdS_cell.Value());
-       LCD.PrintLine(RPS.X()); 
-       LCD.PrintLine(RPS.Y()); 
-       LCD.PrintLine(RPS.Heading());
+       LCD.WriteLine(CdS_cell.Value());
+       LCD.WriteLine(RPS.X()); 
+       LCD.WriteLine(RPS.Y()); 
+       LCD.WriteLine(RPS.Heading());
        Sleep(1000);
     }
 
