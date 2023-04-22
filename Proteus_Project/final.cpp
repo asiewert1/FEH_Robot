@@ -487,12 +487,12 @@ int main(){
     turnRight(260,percent);
     printFile(fptr);
 
-    check_heading(267);
+    check_heading(265);
 
     moveForward(340,percent);
     printFile(fptr);
 
-    check_heading(267);
+    check_heading(266);
 
     check_y(Y_Light,PLUS);
     printFile(fptr);
